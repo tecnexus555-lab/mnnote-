@@ -320,11 +320,6 @@ table.t tr:last-child td{border-bottom:0}
 .modal textarea.input,.modal input.input,.modal select.input{margin-bottom:12px}
 .modal textarea.input{resize:vertical}
 .mrow{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
-.fv{width:min(960px,100%);height:min(92vh,100%);max-height:100%;display:flex;flex-direction:column;gap:10px;padding:12px;overflow:hidden}
-.fv .fh{display:flex;align-items:center;gap:8px;flex:none}
-.fv .fh b{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.fv iframe{flex:1;width:100%;min-height:0;border:0;border-radius:12px;background:#fff}
-.fv pre{flex:1;min-height:0;margin:0;overflow:auto;white-space:pre-wrap;word-break:break-word;unicode-bidi:plaintext;padding:12px;border-radius:12px;background:var(--field);border:1px solid var(--edge2);font:13px/1.8 ui-monospace,Consolas,monospace;user-select:text;-webkit-user-select:text}
 .swatches{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
 .swatches button{width:30px;height:30px;border-radius:50%;border:2px solid var(--edge);padding:0}
 .swatches button.on{outline:3px solid var(--ink);outline-offset:2px}
@@ -405,6 +400,13 @@ table.t tr:last-child td{border-bottom:0}
   .attachments:not(.open) .alist{display:none}
 }
 @media (min-width:861px){.attachments .ahead{display:none}.attachments .alist{display:flex!important}}
+.fvbg{position:fixed;inset:0;z-index:55;display:grid;place-items:center;padding:12px;background:rgba(4,6,20,.55);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.fv{width:min(980px,100%);height:min(90vh,100%);display:flex;flex-direction:column;border-radius:22px;overflow:hidden;background:linear-gradient(150deg,var(--glass2),var(--glass)),var(--bg)}
+.fvh{display:flex;align-items:center;gap:8px;padding:12px 14px 6px}.fvh .input{flex:1;font-weight:600;min-width:0}
+.fvt{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:4px 14px 10px}
+.fv textarea{flex:1;margin:0 14px;border:1px solid var(--edge2);outline:0;resize:none;border-radius:14px;background:var(--field);color:var(--ink);padding:14px;font:13px/1.75 ui-monospace,Consolas,monospace;white-space:pre;tab-size:4;unicode-bidi:plaintext;text-align:start;overflow:auto}
+.fv textarea.wrap{white-space:pre-wrap;word-break:break-word}.fv textarea[readonly]{opacity:.9}
+.fvf{padding:8px 16px 12px;color:var(--muted);font-size:12px}
 </style>
 </head>
 <body>
@@ -501,9 +503,9 @@ table.t tr:last-child td{border-bottom:0}
                   <button id="liveBtn" class="tx" title="تفريغ صوتي مباشر إلى نص"><i data-i="wave" data-s="17"></i></button>
                   <button id="audioBtn" title="إرفاق ملف صوتي"><i data-i="upload" data-s="17"></i></button>
                   <input type="file" id="audioFile" accept="audio/*" hidden>
-                  <button id="fileBtn" title="إرفاق ملف (PDF / نصي / مستند)"><i data-i="paperclip" data-s="17"></i></button>
-                  <input type="file" id="attFile" multiple accept=".pdf,application/pdf,text/*,.txt,.md,.markdown,.csv,.tsv,.json,.xml,.html,.htm,.log,.rtf,.srt,.vtt,.yaml,.yml,.ini,.js,.py,.sql,.tex,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.odt" hidden>
                   <input type="file" id="imgFile" accept="image/*" hidden>
+                  <button id="fileBtn" title="إرفاق ملفات نصية (txt, md, json, csv, كود…)"><i data-i="file" data-s="17"></i></button>
+                  <input type="file" id="txtFile" multiple hidden>
                   <button id="exportBtn" title="تصدير"><i data-i="download" data-s="17"></i></button>
                 </div>
                 <div class="body" id="bodyBox">
@@ -670,7 +672,7 @@ table.t tr:last-child td{border-bottom:0}
             <h3 class="t">المواد والبيانات</h3>
             <div class="row" style="margin-bottom:10px"><button class="btn soft sm" id="seedBooks">إضافة مواد الطب الأساسية</button></div>
             <div class="row"><button class="btn ghost sm" id="backup"><i data-i="download" data-s="15"></i>تصدير JSON</button><label class="btn ghost sm" style="cursor:pointer"><i data-i="upload" data-s="15"></i>استعادة<input type="file" id="restore" accept=".json" hidden></label><button class="btn bad sm" id="wipe">مسح الكل</button></div>
-            <p class="muted" style="margin-bottom:0">النسخة الاحتياطية تحفظ الصفحات والجداول دون الصوت والملفات المرفقة والرسم اليدوي.</p>
+            <p class="muted" style="margin-bottom:0">النسخة الاحتياطية تحفظ الصفحات والجداول دون الصوت والرسم اليدوي.</p>
           </div>
                   <div class="glass pad">
             <h3 class="t">ألوان التطبيق</h3>
@@ -748,8 +750,6 @@ sparkle:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><p
 sliders:'<path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/>',
 plus:'<path d="M12 5v14M5 12h14"/>',
 upload:'<path d="M12 16V4m0 0-4 4m4-4 4 4M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/>',
-file:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/>',
-paperclip:'<path d="m21 11-8.5 8.5a5 5 0 0 1-7-7L14 4a3.3 3.3 0 0 1 4.7 4.7l-8.5 8.5a1.7 1.7 0 0 1-2.4-2.4L15 9"/>',
 download:'<path d="M12 4v12m0 0-4-4m4 4 4-4M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/>',
 trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/>',
 play:'<path d="M7 4v16l13-8z" fill="currentColor"/>',
@@ -786,6 +786,7 @@ flame:'<path d="M12 3c1 4 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-
 check:'<path d="m5 12 5 5 9-10"/>',
 palette:'<path d="M12 3a9 9 0 1 0 0 18c1.5 0 2-1 1.5-2.2-.6-1.3.2-2.8 1.8-2.8H18a3 3 0 0 0 3-3A9 9 0 0 0 12 3z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7.5" r="1"/>',
 text:'<path d="M5 6V4h14v2M12 4v16M9 20h6"/>',
+file:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M10 13l-2 2 2 2M14 13l2 2-2 2"/>',
 more:'<circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/>'
 };
 const ic=(n,sz=18)=>`<svg class="ic" width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${IC[n]||""}</svg>`;
@@ -1365,7 +1366,7 @@ function renderPages(){
     d.style.setProperty("--bc",bookColor(n.book));
     d.innerHTML=`<span class="num">${i+1}</span><div class="pt"><b></b><small></small></div>`;
     d.querySelector("b").textContent=n.title;
-    d.querySelector("small").innerHTML=(n.audio.length?ic("mic",12)+n.audio.length:"")+((n.files||[]).length?" "+ic("paperclip",12)+n.files.length:"")+(n.hasInk?" "+ic("pen",12):"")+(n.cards.length?" "+ic("layers",12)+n.cards.length:"")+" "+new Date(n.updated).toLocaleDateString("ar");
+    d.querySelector("small").innerHTML=(n.audio.length?ic("mic",12)+n.audio.length:"")+((n.files||[]).length?" "+ic("file",12)+n.files.length:"")+(n.hasInk?" "+ic("pen",12):"")+(n.cards.length?" "+ic("layers",12)+n.cards.length:"")+" "+new Date(n.updated).toLocaleDateString("ar");
     d.onclick=()=>openNote(n.id);box.appendChild(d);
   });
   if(!all.length)box.innerHTML='<div class="muted" style="padding:10px">لا توجد صفحات في هذا الدفتر.</div>';
@@ -1816,52 +1817,6 @@ $("#audioFile").onchange=async e=>{
     if(r&&r.button==="ok"&&r.value){addDurationToLecture(r.value,dur,entry);renderAttachments();toast("أُضيفت المدة إلى المحاضرة");}
   }
 };
-/* ---------- File attachments (PDF + text/docs), stored locally in IndexedDB ---------- */
-const FILE_TEXT_EXT=/\.(txt|md|markdown|csv|tsv|json|xml|html?|log|rtf|srt|vtt|ya?ml|ini|cfg|js|ts|py|java|c|cpp|css|sql|tex)$/i;
-const fileKind=a=>{const nm=(a.name||"").toLowerCase(),t=a.type||"";if(t==="application/pdf"||/\.pdf$/.test(nm))return"pdf";if(t.startsWith("text/")||/json|xml/.test(t)||FILE_TEXT_EXT.test(nm))return"text";return"other";};
-$("#fileBtn").onclick=()=>{if(!cur())return toast("افتح صفحة أولاً");$("#attFile").click();};
-$("#attFile").onchange=async e=>{
-  const n=cur(),fs=[...e.target.files];e.target.value="";if(!n||!fs.length)return;
-  if(!n.files)n.files=[];
-  let ok=0;
-  for(const f of fs){
-    const id=uid()+uid();await blobPut(id,f);
-    const type=f.type||(/\.pdf$/i.test(f.name)?"application/pdf":FILE_TEXT_EXT.test(f.name)?"text/plain":"application/octet-stream");
-    n.files.push({id,name:f.name,size:f.size,type,fmt:2,chunks:Math.ceil(f.size/BCH),up:0,added:Date.now()});ok++;
-  }
-  n.updated=Date.now();persistNote(n);renderAttachments();renderPages();pumpUploads();
-  toast(ok>1?`تم إرفاق ${ok} ملفات`:"تم إرفاق الملف");
-};
-async function openFile(a){
-  const b=await blobGet(a);
-  if(!b)return toast("هذا الملف غير متاح على هذا الجهاز");
-  const k=fileKind(a);
-  if(k==="other")return saveFile(a.name,b);
-  const bg=document.createElement("div");bg.className="modal-bg";
-  const m=document.createElement("div");m.className="modal glass fv";
-  m.innerHTML=`<div class="fh">${ic("file",18)}<b></b>${k==="pdf"?`<button class="btn sm ghost ext">${ic("link",14)}تبويب جديد</button>`:`<button class="btn sm soft ins">${ic("plus",14)}إدراج في الصفحة</button>`}<button class="btn sm ghost dl">${ic("download",14)}تنزيل</button><button class="btn sm ghost icon x" style="width:34px;height:34px">${ic("x",16)}</button></div>`;
-  m.querySelector("b").textContent=a.name;
-  let url=null,txt="";
-  const key=e=>{if(e.key==="Escape")close();};
-  const close=()=>{if(url)URL.revokeObjectURL(url);bg.remove();document.removeEventListener("keydown",key);};
-  if(k==="pdf"){
-    url=URL.createObjectURL(new Blob([b],{type:"application/pdf"}));
-    const f=document.createElement("iframe");f.src=url;m.appendChild(f);
-    m.querySelector(".ext").onclick=()=>window.open(url,"_blank");
-  }else{
-    txt=await b.text();
-    const pre=document.createElement("pre");pre.textContent=txt.length>2000000?txt.slice(0,2000000)+"\n…":txt;m.appendChild(pre);
-    m.querySelector(".ins").onclick=()=>{
-      if(UI.mode!=="text"||!$("#editor"))return toast("بدّل إلى وضع «نص» أولاً");
-      close();$("#editor").focus();document.execCommand("insertText",false,txt);touch();
-    };
-  }
-  m.querySelector(".dl").onclick=()=>saveFile(a.name,b);
-  m.querySelector(".x").onclick=close;
-  bg.onclick=e=>{if(e.target===bg)close();};
-  document.addEventListener("keydown",key);
-  bg.appendChild(m);document.body.appendChild(bg);
-}
 let recog=null;
 $("#liveBtn").onclick=()=>{
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
@@ -1921,26 +1876,83 @@ function renderAttachments(){
   });
   (n.files||[]).forEach(a=>{
     const d=document.createElement("div");d.className="arow";d.dataset.aid=a.id;
-    d.innerHTML=`<div class="top">${ic("file",16)}<span class="an" title="اضغط لإعادة التسمية"></span><span class="meta"></span><span class="pill abadge"></span><span class="sp" style="flex:1"></span><button class="btn sm ok op">${ic("file",14)}فتح</button><button class="btn sm ghost dl" title="تنزيل">${ic("download",14)}</button><button class="btn sm bad del">${ic("trash",14)}</button></div>`;
-    d.querySelector(".an").textContent=a.name;
-    d.querySelector(".meta").textContent=fmtSize(a.size||0);
-    d.querySelector(".abadge").textContent=audioStatus(a);
-    d.querySelector(".op").onclick=()=>openFile(a);
-    d.querySelector(".dl").onclick=async()=>{const b=await blobGet(a);if(!b)return toast("هذا الملف غير متاح على هذا الجهاز");saveFile(a.name,b);};
-    d.querySelector(".an").onclick=async()=>{const v=await uiPrompt("اسم الملف","",a.name);if(v){a.name=v;n.updated=Date.now();persistNote(n);renderAttachments();}};
+    const ext=(a.name.match(/\.([^.]+)$/)||[0,"txt"])[1].toLowerCase().slice(0,6);
+    d.innerHTML=`<div class="top">${ic("file",16)}<span class="an" title="فتح"></span><span class="pill cool">${esc(ext)}</span><span class="meta"></span><span class="pill abadge"></span><span style="flex:1"></span><button class="btn sm ok op">${ic("pen",14)}فتح وتعديل</button><button class="btn sm ghost dl" title="تنزيل">${ic("download",14)}</button><button class="btn sm ghost del" title="حذف">${ic("trash",14)}</button></div>`;
+    d.querySelector(".an").textContent=a.name;d.querySelector(".meta").textContent=fmtSize(a.size||0);d.querySelector(".abadge").textContent=audioStatus(a);
+    d.querySelector(".an").onclick=d.querySelector(".op").onclick=()=>openFile(a);
+    d.querySelector(".dl").onclick=async()=>{const b=await blobGet(a);if(!b)return toast("الملف غير متاح على هذا الجهاز بعد");saveFile(a.name,await b.text());};
     d.querySelector(".del").onclick=async()=>{
-      if(!(await uiConfirm("حذف الملف","سيُحذف هذا الملف نهائيًا من كل أجهزتك.","حذف")))return;
+      if(!(await uiConfirm("حذف الملف","سيُحذف «"+a.name+"» نهائيًا من كل أجهزتك.","حذف")))return;
       n.files=n.files.filter(x=>x!==a);delBlob(a);n.updated=Date.now();persistNote(n);renderAttachments();renderPages();
     };
     list.appendChild(d);
   });
-  if(n.audio.length||(n.files||[]).length){
-    const hd=document.createElement("button");hd.className="ahead";hd.innerHTML=ic("paperclip",16)+`<span>المرفقات (${n.audio.length+(n.files||[]).length})</span><span class="chev">${ic("chevR",16)}</span>`;
+  const tot=n.audio.length+(n.files||[]).length;
+  if(tot){
+    const hd=document.createElement("button");hd.className="ahead";hd.innerHTML=ic("file",16)+`<span>المرفقات (${tot})</span><span class="chev">${ic("chevR",16)}</span>`;
     hd.onclick=()=>{box.classList.toggle("open");attOpen=box.classList.contains("open");};
     box.classList.toggle("open",attOpen);box.appendChild(hd);box.appendChild(list);
   }
 }
 let attOpen=false;
+/* ---------- Text files (attach / view / edit) ---------- */
+const MAXTXT=5*1048576;
+async function decodeText(f){
+  const u=new Uint8Array(await f.arrayBuffer());
+  if(u[0]===255&&u[1]===254)return new TextDecoder("utf-16le").decode(u.subarray(2));
+  if(u[0]===254&&u[1]===255)return new TextDecoder("utf-16be").decode(u.subarray(2));
+  const pr=u.subarray(0,8192);let bad=0;for(const b of pr)if(b===0||(b<32&&b!==9&&b!==10&&b!==13&&b!==12&&b!==27))bad++;
+  if(pr.length&&bad>pr.length*.02)return null;
+  try{return new TextDecoder("utf-8",{fatal:true}).decode(u).replace(/^\uFEFF/,"");}
+  catch(e){try{return new TextDecoder("windows-1256").decode(u);}catch(_){return null;}}
+}
+async function writeFileBlob(n,a,text,name){
+  const bl=new Blob([text],{type:"text/plain;charset=utf-8"});
+  if(a.id)delBlob(a);
+  a.id=uid()+uid();a.name=name||a.name;a.size=bl.size;a.type="text/plain";a.fmt=2;a.chunks=Math.ceil(bl.size/BCH);a.up=0;a.cloudFail=false;a.t=Date.now();
+  await blobPut(a.id,bl);n.updated=Date.now();persistNote(n);pumpUploads();
+}
+$("#fileBtn").onclick=()=>{if(!cur())return toast("افتح صفحة أولاً");$("#txtFile").click();};
+$("#txtFile").onchange=async e=>{
+  const n=cur(),fs=[...e.target.files];e.target.value="";if(!n||!fs.length)return;
+  let last=null;
+  for(const f of fs){
+    if(f.size>MAXTXT){toast(`«${f.name}» أكبر من 5 ميغابايت`);continue;}
+    const t=await decodeText(f);if(t===null){toast(`«${f.name}» ليس ملفًا نصيًا`);continue;}
+    const a={name:f.name};await writeFileBlob(n,a,t);n.files=n.files||[];n.files.push(a);last=a;
+  }
+  if(!last)return;
+  n.updated=Date.now();persistNote(n);attOpen=true;renderAttachments();renderPages();
+  toast(fs.length>1?"تم إرفاق الملفات":"تم إرفاق الملف");if(fs.length===1)openFile(last);
+};
+async function openFile(a){
+  const n=cur();if(!n)return;
+  const b=await blobGet(a);if(!b)return toast("الملف غير متاح على هذا الجهاز بعد");
+  const orig=await b.text();let dirty=false,editing=false;
+  const bg=document.createElement("div");bg.className="fvbg";
+  bg.innerHTML=`<div class="fv glass"><div class="fvh">${ic("file",20)}<input class="input fvn" placeholder="اسم الملف"><button class="btn ghost icon fvx" style="width:36px;height:36px">${ic("x",16)}</button></div>
+  <div class="fvt"><button class="btn sm soft fvm"></button><button class="btn sm ghost fvw">التفاف الأسطر</button><button class="btn sm ghost fvc">${ic("check",14)}نسخ</button><button class="btn sm ghost fvd">${ic("download",14)}تنزيل</button><span style="flex:1"></span><button class="btn sm fvs">حفظ</button></div>
+  <textarea spellcheck="false" readonly></textarea><div class="fvf"></div></div>`;
+  const $f=q=>bg.querySelector(q),ta=$f("textarea"),nm=$f(".fvn"),inf=$f(".fvf");
+  ta.value=orig;nm.value=a.name;
+  const info=()=>{inf.textContent=`${ta.value.split("\n").length} سطر • ${ta.value.length} حرف`+(dirty?" • تعديلات غير محفوظة":"");$f(".fvs").disabled=!dirty;};
+  const mode=()=>{ta.readOnly=!editing;$f(".fvm").innerHTML=editing?ic("text",14)+"وضع العرض":ic("pen",14)+"وضع التعديل";if(editing)ta.focus();};
+  const save=async()=>{if(!dirty)return;await writeFileBlob(n,a,ta.value,nm.value.trim()||a.name);dirty=false;renderAttachments();info();toast("تم حفظ الملف");};
+  const close=async()=>{if(dirty&&!(await uiConfirm("تعديلات غير محفوظة","هل تريد الإغلاق وتجاهل التعديلات؟","تجاهل")))return;document.removeEventListener("keydown",key,true);bg.remove();};
+  const key=e=>{if(!document.body.contains(bg)||document.querySelector(".modal-bg"))return;if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="s"){e.preventDefault();save();}else if(e.key==="Escape")close();};
+  document.addEventListener("keydown",key,true);
+  ta.oninput=()=>{dirty=true;info();};
+  ta.onkeydown=e=>{if(e.key==="Tab"&&editing){e.preventDefault();document.execCommand("insertText",false,"\t");}};
+  nm.oninput=()=>{dirty=true;info();};
+  $f(".fvm").onclick=()=>{editing=!editing;mode();};
+  $f(".fvw").onclick=()=>ta.classList.toggle("wrap");
+  $f(".fvc").onclick=async()=>toast((await copyText(ta.value))?"تم النسخ":"تعذر النسخ");
+  $f(".fvd").onclick=()=>saveFile(nm.value.trim()||a.name,ta.value);
+  $f(".fvs").onclick=save;$f(".fvx").onclick=close;
+  bg.onmousedown=e=>{if(e.target===bg)close();};
+  document.body.appendChild(bg);mode();info();
+}
+
 /* Player */
 const PL={au:new Audio(),entry:null,url:null,rate:1,seeking:false};
 const RATES=[1,1.25,1.5,1.75,2,0.75];
@@ -2352,7 +2364,7 @@ $("#restore").onchange=async e=>{
   const f=e.target.files[0];if(!f)return;
   try{
     const d=JSON.parse(await f.text());let added=0;
-    (d.notes||[]).forEach(x=>{const n=normNote(x);n.audio=[];n.files=[];n.hasInk=false;if(!S.notes.some(y=>y.id===n.id)){S.notes.push(n);persistNote(n);added++;}});
+    (d.notes||[]).forEach(x=>{const n=normNote(x);n.audio=[];n.hasInk=false;if(!S.notes.some(y=>y.id===n.id)){S.notes.push(n);persistNote(n);added++;}});
     const m=d.meta||{lectures:d.lectures,exams:d.exams,books:[]};
     (m.books||[]).forEach(b=>{if(!books().some(x=>x.id===b.id||x.name===b.name))books().push(b);});
     const lid=new Set(S.meta.lectures.map(x=>x.id));(m.lectures||[]).forEach(x=>{if(!lid.has(x.id))S.meta.lectures.push(x);});
