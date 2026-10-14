@@ -11,8 +11,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>MNnote+</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%238b6cff'/%3E%3Cstop offset='1' stop-color='%2322d3ee'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='48' height='48' rx='11' fill='url(%23g)'/%3E%3Cpath d='M24 4.5 31.5 17 28 28.5 24 32 20 28.5 16.5 17Z' fill='%23fff'/%3E%3Cpath d='M24 17.5v10' stroke='%238b6cff' stroke-width='1.6' stroke-linecap='round'/%3E%3Ccircle cx='24' cy='14.5' r='1.9' fill='%238b6cff'/%3E%3Ctext x='24' y='45.5' text-anchor='middle' font-family='sans-serif' font-weight='700' font-size='11' fill='%23fff'%3EMN%3C/text%3E%3C/svg%3E">
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%238b6cff'/%3E%3Cstop offset='1' stop-color='%2322d3ee'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='48' height='48' rx='11' fill='url(%23g)'/%3E%3Cpath d='M24 4.5 31.5 17 28 28.5 24 32 20 28.5 16.5 17Z' fill='%23fff'/%3E%3Cpath d='M24 17.5v10' stroke='%238b6cff' stroke-width='1.6' stroke-linecap='round'/%3E%3Ccircle cx='24' cy='14.5' r='1.9' fill='%238b6cff'/%3E%3Ctext x='24' y='45.5' text-anchor='middle' font-family='sans-serif' font-weight='700' font-size='11' fill='%23fff'%3EMN%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="icon-192.png">
 <meta name="theme-color" content="#060714">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="MNnote+">
 <meta name="author" content="Tecnexus555@gmail.com">
 <meta name="copyright" content="© 2026 Tecnexus555@gmail.com — All rights reserved">
 <meta name="robots" content="noai, noimageai">
@@ -400,13 +404,6 @@ table.t tr:last-child td{border-bottom:0}
   .attachments:not(.open) .alist{display:none}
 }
 @media (min-width:861px){.attachments .ahead{display:none}.attachments .alist{display:flex!important}}
-.fvbg{position:fixed;inset:0;z-index:55;display:grid;place-items:center;padding:12px;background:rgba(4,6,20,.55);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
-.fv{width:min(980px,100%);height:min(90vh,100%);display:flex;flex-direction:column;border-radius:22px;overflow:hidden;background:linear-gradient(150deg,var(--glass2),var(--glass)),var(--bg)}
-.fvh{display:flex;align-items:center;gap:8px;padding:12px 14px 6px}.fvh .input{flex:1;font-weight:600;min-width:0}
-.fvt{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:4px 14px 10px}
-.fv textarea{flex:1;margin:0 14px;border:1px solid var(--edge2);outline:0;resize:none;border-radius:14px;background:var(--field);color:var(--ink);padding:14px;font:13px/1.75 ui-monospace,Consolas,monospace;white-space:pre;tab-size:4;unicode-bidi:plaintext;text-align:start;overflow:auto}
-.fv textarea.wrap{white-space:pre-wrap;word-break:break-word}.fv textarea[readonly]{opacity:.9}
-.fvf{padding:8px 16px 12px;color:var(--muted);font-size:12px}
 </style>
 </head>
 <body>
@@ -502,10 +499,10 @@ table.t tr:last-child td{border-bottom:0}
                   <button id="tsBtn" class="tx" title="إدراج وقت التسجيل" style="display:none"><i data-i="flag" data-s="17"></i></button>
                   <button id="liveBtn" class="tx" title="تفريغ صوتي مباشر إلى نص"><i data-i="wave" data-s="17"></i></button>
                   <button id="audioBtn" title="إرفاق ملف صوتي"><i data-i="upload" data-s="17"></i></button>
+                  <button id="fileBtn" title="إرفاق ملف (PDF / عرض تقديمي / Word …)"><i data-i="clip" data-s="17"></i></button>
+                  <input type="file" id="attFile" multiple hidden>
                   <input type="file" id="audioFile" accept="audio/*" hidden>
                   <input type="file" id="imgFile" accept="image/*" hidden>
-                  <button id="fileBtn" title="إرفاق ملفات نصية (txt, md, json, csv, كود…)"><i data-i="file" data-s="17"></i></button>
-                  <input type="file" id="txtFile" multiple hidden>
                   <button id="exportBtn" title="تصدير"><i data-i="download" data-s="17"></i></button>
                 </div>
                 <div class="body" id="bodyBox">
@@ -661,7 +658,28 @@ table.t tr:last-child td{border-bottom:0}
             <h3 class="t">التسجيل الصوتي</h3>
             <div class="field"><label>جودة التسجيل (تؤثر على حجم الساعة الواحدة)</label>
               <select class="input" id="recQ"><option value="16000">عادية — ≈7 ميغابايت/ساعة (مناسبة للمحاضرات)</option><option value="24000">جيدة — ≈11 ميغابايت/ساعة</option><option value="32000">عالية — ≈14 ميغابايت/ساعة</option></select></div>
-            <p class="muted" id="storeInfo" style="margin:0"></p>
+            
+          </div>
+          <div class="glass pad" id="storeCard">
+            <h3 class="t">مساحة التخزين</h3>
+            <div class="bar" style="margin-bottom:8px"><i id="storeBar" style="width:0%"></i></div>
+            <p class="muted" id="storeTxt" style="margin:0 0 10px">…</p>
+            <div class="row" style="margin-bottom:12px"><span class="pill" id="storePersist"></span><button class="btn ghost sm hidden" id="storePersistBtn">حماية البيانات من الحذف التلقائي</button></div>
+            <div class="field"><label>دقة الصور المُدرجة (للأشعة والشرائح النسيجية)</label><select class="input" id="imgQ"><option value="1600">عادية — 1600px</option><option value="2400">عالية — 2400px</option><option value="3200">عالية جداً — 3200px</option></select></div>
+            <p class="muted" style="margin:0;line-height:1.9">الصفحات والتسجيلات والملفات والرسم تُحفظ في مخزن المتصفح على جهازك، وسعته كبيرة (تقدّرها الأرقام أعلاه). الملفات التي تزيد عن 40MB والتسجيلات فوق 80MB تبقى على الجهاز ولا تُزامَن.</p>
+          </div>
+          <div class="glass pad" id="installCard">
+            <h3 class="t">تثبيت كتطبيق</h3>
+            <p class="muted" style="margin-top:0;line-height:1.9">ثبّته على شاشة هاتفك ليفتح كتطبيق مستقل بملء الشاشة ويعمل بدون إنترنت.</p>
+            <button class="btn" id="installBtn">تثبيت التطبيق</button>
+          </div>
+          <div class="glass pad" id="gemCard">
+            <h3 class="t">المعلم الذكي المجاني (Gemini)</h3>
+            <p class="muted" style="margin-top:0;line-height:1.9">داخل Claude يعمل المعلم تلقائياً. في النسخة المنشورة على GitHub ضع مفتاح Gemini المجاني ليعمل المعلم وتوليد البطاقات واختبارات MCQ.</p>
+            <div class="field"><label>مفتاح Gemini API</label><input class="input" id="gemKey" type="password" placeholder="AIza…" autocomplete="off" spellcheck="false" style="direction:ltr;text-align:left"></div>
+            <div class="field"><label>اسم النموذج (اختياري)</label><input class="input" id="gemModel" placeholder="gemini-2.5-flash" autocomplete="off" spellcheck="false" style="direction:ltr;text-align:left"></div>
+            <div class="row"><button class="btn sm" id="gemSave">حفظ</button><button class="btn ghost sm" id="gemTest">اختبار</button><button class="btn ghost sm" id="gemClear">حذف المفتاح</button></div>
+            <p class="muted" style="margin-bottom:0;line-height:1.9">يُحفظ المفتاح على هذا الجهاز فقط ولا يُرسل إلا إلى Google. في الخطة المجانية قد تستخدم Google المحادثات لتحسين منتجاتها، فلا ترسل بيانات مرضى حقيقيين.</p>
           </div>
           <div class="glass pad">
             <h3 class="t">التذكيرات</h3>
@@ -786,7 +804,7 @@ flame:'<path d="M12 3c1 4 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-
 check:'<path d="m5 12 5 5 9-10"/>',
 palette:'<path d="M12 3a9 9 0 1 0 0 18c1.5 0 2-1 1.5-2.2-.6-1.3.2-2.8 1.8-2.8H18a3 3 0 0 0 3-3A9 9 0 0 0 12 3z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7.5" r="1"/>',
 text:'<path d="M5 6V4h14v2M12 4v16M9 20h6"/>',
-file:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M10 13l-2 2 2 2M14 13l2 2-2 2"/>',
+clip:'<path d="M21 11.5l-8.6 8.6a5 5 0 0 1-7-7l8.6-8.6a3.3 3.3 0 0 1 4.7 4.7l-8.6 8.6a1.7 1.7 0 0 1-2.4-2.4l7.9-7.9"/>',
 more:'<circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/>'
 };
 const ic=(n,sz=18)=>`<svg class="ic" width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${IC[n]||""}</svg>`;
@@ -867,8 +885,8 @@ const bookColor=id=>(bookById(id)||{color:"#64748b"}).color;
 const bookName=id=>id==="_all"?"كل الصفحات":(bookById(id)||{name:"غير مصنّف"}).name;
 
 /* ---------- IndexedDB (audio blobs, recording parts, ink) ---------- */
-const IDB={db:null,mem:{blobs:new Map(),parts:new Map(),ink:new Map()},
-  open(){return new Promise(res=>{try{const r=indexedDB.open("mnnote_v4",1);r.onupgradeneeded=()=>{["blobs","parts","ink"].forEach(n=>r.result.createObjectStore(n));};r.onsuccess=()=>{this.db=r.result;res(true);};r.onerror=()=>res(false);r.onblocked=()=>res(false);}catch(e){res(false);}});},
+const IDB={db:null,mem:{blobs:new Map(),parts:new Map(),ink:new Map(),kv:new Map()},
+  open(){return new Promise(res=>{try{const r=indexedDB.open("mnnote_v4",2);r.onupgradeneeded=()=>{const d=r.result;["blobs","parts","ink","kv"].forEach(n=>{if(!d.objectStoreNames.contains(n))d.createObjectStore(n);});};r.onsuccess=()=>{this.db=r.result;res(true);};r.onerror=()=>res(false);r.onblocked=()=>res(false);}catch(e){res(false);}});},
   put(st,k,v){if(!this.db){this.mem[st].set(k,v);return Promise.resolve();}return new Promise((res,rej)=>{try{const t=this.db.transaction(st,"readwrite");t.objectStore(st).put(v,k);t.oncomplete=()=>res();t.onerror=()=>{this.mem[st].set(k,v);rej(t.error);};t.onabort=()=>{this.mem[st].set(k,v);rej(t.error);};}catch(e){this.mem[st].set(k,v);rej(e);}});},
   get(st,k){if(this.mem[st].has(k))return Promise.resolve(this.mem[st].get(k));if(!this.db)return Promise.resolve(undefined);return new Promise(res=>{try{const r=this.db.transaction(st).objectStore(st).get(k);r.onsuccess=()=>res(r.result);r.onerror=()=>res(undefined);}catch(e){res(undefined);}});},
   del(st,k){this.mem[st].delete(k);if(!this.db)return Promise.resolve();return new Promise(res=>{try{const t=this.db.transaction(st,"readwrite");t.objectStore(st).delete(k);t.oncomplete=()=>res();t.onerror=()=>res();}catch(e){res();}});},
@@ -884,7 +902,8 @@ const readLS=k=>{try{return JSON.parse(localStorage.getItem(k));}catch(e){return
 const writeLS=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));return true;}catch(e){mem[k]=v;return false;}};
 function dataUrlToBlob(u){const i=u.indexOf(","),mime=(u.slice(5,i).split(";")[0])||"audio/webm";return new Blob([bytesFromB64(u.slice(i+1))],{type:mime});}
 async function loadLocalData(){
-  let d=readLS(LK);
+  let d=null;try{d=(await IDB.get("kv","local"))||null;}catch(e){}
+  if(!d)d=readLS(LK);
   if(!d){
     const g=readLS("mnnote_data_guest")||readLS("mnnote_plus_v1");
     if(g){d={notes:(g.notes||[]).map(n=>({...n,audio:[]})),meta:{...DEFAULT_META(),lectures:g.lectures||[],exams:g.exams||[],settings:{email:(g.settings&&g.settings.email)||"",recBps:16000}}};writeLS(LK,d);}
@@ -897,8 +916,14 @@ async function loadLocalData(){
   if(old){for(const n of d.notes){for(const a of n.audio){if(!a.fmt&&old[a.id]){try{const b=dataUrlToBlob(old[a.id]);await blobPut(a.id,b);a.fmt=2;a.type=b.type;a.size=b.size;a.chunks=Math.ceil(b.size/BCH);a.up=0;a.dur=a.dur||0;}catch(e){}}}}writeLS(LK,d);try{localStorage.removeItem(AK);}catch(e){}}
   return d;
 }
-let lsT;
-function localSave(){clearTimeout(lsT);lsT=setTimeout(()=>{if(!writeLS(LK,{notes:S.notes,meta:S.meta}))toast("المساحة المحلية ممتلئة");},300);}
+let lsT=null;
+async function localSaveNow(){
+  if(S!==LOCAL)return;
+  const data={notes:S.notes,meta:S.meta};
+  if(IDB.db){try{await IDB.put("kv","local",data);try{localStorage.removeItem(LK);}catch(e){}return;}catch(e){}}
+  if(!writeLS(LK,data))toast("المساحة المحلية ممتلئة");
+}
+function localSave(){clearTimeout(lsT);lsT=setTimeout(()=>{lsT=null;localSaveNow();},500);}
 const localHasData=()=>!!(LOCAL&&(LOCAL.notes.length||LOCAL.meta.lectures.length||LOCAL.meta.exams.length));
 
 /* ---------- Cloud write queue ---------- */
@@ -939,7 +964,7 @@ async function delDoc(key,ref){
   if(w){clearTimeout(w.timer);w.dirty=false;w.again=false;while(w.busy)await sleep(150);wq.delete(key);}
   try{await ref.delete();}catch(e){handleDbErr(e);}
 }
-function flushAllNow(){inkFlush();wq.forEach((w,k)=>{if(w.dirty&&w.timer){clearTimeout(w.timer);flush(k);}});}
+function flushAllNow(){inkFlush();if(lsT){clearTimeout(lsT);lsT=null;localSaveNow();}wq.forEach((w,k)=>{if(w.dirty&&w.timer){clearTimeout(w.timer);flush(k);}});}
 document.addEventListener("visibilitychange",()=>{if(document.hidden)flushAllNow();});
 window.addEventListener("pagehide",flushAllNow);
 function handleDbErr(e){
@@ -981,6 +1006,7 @@ async function persistDeleteNote(n){
 
 /* ---------- Blob store: local-first (IndexedDB) + chunked cloud upload ---------- */
 const BCH=window.__BCH||135000;
+const CLOUD_FILE_MAX=40*1048576;
 const storeDoc=()=>P.db.doc(`data/users/${P.uid}/audio`);
 const chunkColl=()=>storeDoc().collection("chunks");
 const inkColl=()=>storeDoc().collection("ink");
@@ -1025,8 +1051,10 @@ async function pumpUploads(){
   uploading=true;updateSyncState();
   try{
     for(const n of S.notes){
-      for(const a of [...n.audio,...(n.files||[])]){
-        if(a.fmt!==2||(a.up||0)>=a.chunks||a.cloudFail)continue;
+      for(const a of n.audio.concat(n.files||[])){
+        if(a.fmt!==2||(a.up||0)>=a.chunks||a.cloudFail||a.localOnly)continue;
+        const cap=(a.type||"").startsWith("audio")?80*1048576:CLOUD_FILE_MAX;
+        if((a.size||0)>cap){a.localOnly=true;n.updated=Date.now();persistNote(n);toast("«"+(a.name||"ملف")+"» كبير جداً للمزامنة، سيبقى على هذا الجهاز فقط");continue;}
         const b=await blobLocal(a.id);if(!b)continue;
         try{
           await uploadBlob(a,b,()=>refreshAudioRow(a));
@@ -1366,7 +1394,7 @@ function renderPages(){
     d.style.setProperty("--bc",bookColor(n.book));
     d.innerHTML=`<span class="num">${i+1}</span><div class="pt"><b></b><small></small></div>`;
     d.querySelector("b").textContent=n.title;
-    d.querySelector("small").innerHTML=(n.audio.length?ic("mic",12)+n.audio.length:"")+((n.files||[]).length?" "+ic("file",12)+n.files.length:"")+(n.hasInk?" "+ic("pen",12):"")+(n.cards.length?" "+ic("layers",12)+n.cards.length:"")+" "+new Date(n.updated).toLocaleDateString("ar");
+    d.querySelector("small").innerHTML=(n.audio.length?ic("mic",12)+n.audio.length:"")+(n.hasInk?" "+ic("pen",12):"")+(n.cards.length?" "+ic("layers",12)+n.cards.length:"")+" "+new Date(n.updated).toLocaleDateString("ar");
     d.onclick=()=>openNote(n.id);box.appendChild(d);
   });
   if(!all.length)box.innerHTML='<div class="muted" style="padding:10px">لا توجد صفحات في هذا الدفتر.</div>';
@@ -1651,10 +1679,10 @@ async function fileToImageBlob(f){
   return new Promise((res,rej)=>{
     const u=URL.createObjectURL(f),img=new Image();
     img.onload=()=>{
-      const max=1600,sc=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement("canvas");
+      const cfg=+(S.meta.settings.imgMax)||0,max=P.mode==="cloud"?Math.min(cfg||1600,2400):(cfg||2400),sc=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement("canvas");
       c.width=Math.round(img.width*sc);c.height=Math.round(img.height*sc);
       const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(u);
-      c.toBlob(b=>b?res({blob:b,w:c.width,h:c.height}):rej(new Error("toBlob")),"image/jpeg",.8);
+      c.toBlob(b=>b?res({blob:b,w:c.width,h:c.height}):rej(new Error("toBlob")),"image/jpeg",.85);
     };
     img.onerror=()=>{URL.revokeObjectURL(u);rej(new Error("img"));};img.src=u;
   });
@@ -1833,6 +1861,7 @@ $("#liveBtn").onclick=()=>{
 };
 function audioStatus(a){
   if(P.mode!=="cloud")return"على هذا الجهاز";
+  if(a.localOnly)return"على هذا الجهاز فقط (كبير)";
   if(a.cloudFail)return"محلي فقط (المساحة ممتلئة)";
   if(a.fmt!==2&&a.chunks)return"☁ متزامن";
   if((a.up||0)>=a.chunks)return"☁ متزامن";
@@ -1874,85 +1903,21 @@ function renderAttachments(){
     };
     list.appendChild(d);
   });
-  (n.files||[]).forEach(a=>{
-    const d=document.createElement("div");d.className="arow";d.dataset.aid=a.id;
-    const ext=(a.name.match(/\.([^.]+)$/)||[0,"txt"])[1].toLowerCase().slice(0,6);
-    d.innerHTML=`<div class="top">${ic("file",16)}<span class="an" title="فتح"></span><span class="pill cool">${esc(ext)}</span><span class="meta"></span><span class="pill abadge"></span><span style="flex:1"></span><button class="btn sm ok op">${ic("pen",14)}فتح وتعديل</button><button class="btn sm ghost dl" title="تنزيل">${ic("download",14)}</button><button class="btn sm ghost del" title="حذف">${ic("trash",14)}</button></div>`;
-    d.querySelector(".an").textContent=a.name;d.querySelector(".meta").textContent=fmtSize(a.size||0);d.querySelector(".abadge").textContent=audioStatus(a);
-    d.querySelector(".an").onclick=d.querySelector(".op").onclick=()=>openFile(a);
-    d.querySelector(".dl").onclick=async()=>{const b=await blobGet(a);if(!b)return toast("الملف غير متاح على هذا الجهاز بعد");saveFile(a.name,await b.text());};
-    d.querySelector(".del").onclick=async()=>{
-      if(!(await uiConfirm("حذف الملف","سيُحذف «"+a.name+"» نهائيًا من كل أجهزتك.","حذف")))return;
-      n.files=n.files.filter(x=>x!==a);delBlob(a);n.updated=Date.now();persistNote(n);renderAttachments();renderPages();
-    };
+  n.files.forEach(f=>{
+    const d=document.createElement("div");d.className="arow";d.dataset.aid=f.id;
+    d.innerHTML=`<div class="top">${ic("clip",16)}<span class="an"></span><span class="meta"></span><span class="pill abadge"></span><span class="sp" style="flex:1"></span><button class="btn sm ok op">فتح</button><button class="btn sm soft dw" title="تنزيل">${ic("download",14)}</button><button class="btn sm bad del">${ic("trash",14)}</button></div>`;
+    d.querySelector(".an").textContent=f.name;d.querySelector(".meta").textContent=fmtSize(f.size||0);d.querySelector(".abadge").textContent=audioStatus(f);
+    d.querySelector(".op").onclick=()=>openFile(f,false);d.querySelector(".dw").onclick=()=>openFile(f,true);
+    d.querySelector(".del").onclick=async()=>{if(!(await uiConfirm("حذف الملف","سيُحذف «"+f.name+"» نهائياً من كل أجهزتك.","حذف")))return;n.files=n.files.filter(x=>x!==f);delBlob(f);n.updated=Date.now();persistNote(n);renderAttachments();renderPages();updateStorageCard();};
     list.appendChild(d);
   });
-  const tot=n.audio.length+(n.files||[]).length;
-  if(tot){
-    const hd=document.createElement("button");hd.className="ahead";hd.innerHTML=ic("file",16)+`<span>المرفقات (${tot})</span><span class="chev">${ic("chevR",16)}</span>`;
+  if(n.audio.length+n.files.length){
+    const hd=document.createElement("button");hd.className="ahead";hd.innerHTML=ic("mic",16)+`<span>التسجيلات والملفات (${n.audio.length+n.files.length})</span><span class="chev">${ic("chevR",16)}</span>`;
     hd.onclick=()=>{box.classList.toggle("open");attOpen=box.classList.contains("open");};
     box.classList.toggle("open",attOpen);box.appendChild(hd);box.appendChild(list);
   }
 }
 let attOpen=false;
-/* ---------- Text files (attach / view / edit) ---------- */
-const MAXTXT=5*1048576;
-async function decodeText(f){
-  const u=new Uint8Array(await f.arrayBuffer());
-  if(u[0]===255&&u[1]===254)return new TextDecoder("utf-16le").decode(u.subarray(2));
-  if(u[0]===254&&u[1]===255)return new TextDecoder("utf-16be").decode(u.subarray(2));
-  const pr=u.subarray(0,8192);let bad=0;for(const b of pr)if(b===0||(b<32&&b!==9&&b!==10&&b!==13&&b!==12&&b!==27))bad++;
-  if(pr.length&&bad>pr.length*.02)return null;
-  try{return new TextDecoder("utf-8",{fatal:true}).decode(u).replace(/^\uFEFF/,"");}
-  catch(e){try{return new TextDecoder("windows-1256").decode(u);}catch(_){return null;}}
-}
-async function writeFileBlob(n,a,text,name){
-  const bl=new Blob([text],{type:"text/plain;charset=utf-8"});
-  if(a.id)delBlob(a);
-  a.id=uid()+uid();a.name=name||a.name;a.size=bl.size;a.type="text/plain";a.fmt=2;a.chunks=Math.ceil(bl.size/BCH);a.up=0;a.cloudFail=false;a.t=Date.now();
-  await blobPut(a.id,bl);n.updated=Date.now();persistNote(n);pumpUploads();
-}
-$("#fileBtn").onclick=()=>{if(!cur())return toast("افتح صفحة أولاً");$("#txtFile").click();};
-$("#txtFile").onchange=async e=>{
-  const n=cur(),fs=[...e.target.files];e.target.value="";if(!n||!fs.length)return;
-  let last=null;
-  for(const f of fs){
-    if(f.size>MAXTXT){toast(`«${f.name}» أكبر من 5 ميغابايت`);continue;}
-    const t=await decodeText(f);if(t===null){toast(`«${f.name}» ليس ملفًا نصيًا`);continue;}
-    const a={name:f.name};await writeFileBlob(n,a,t);n.files=n.files||[];n.files.push(a);last=a;
-  }
-  if(!last)return;
-  n.updated=Date.now();persistNote(n);attOpen=true;renderAttachments();renderPages();
-  toast(fs.length>1?"تم إرفاق الملفات":"تم إرفاق الملف");if(fs.length===1)openFile(last);
-};
-async function openFile(a){
-  const n=cur();if(!n)return;
-  const b=await blobGet(a);if(!b)return toast("الملف غير متاح على هذا الجهاز بعد");
-  const orig=await b.text();let dirty=false,editing=false;
-  const bg=document.createElement("div");bg.className="fvbg";
-  bg.innerHTML=`<div class="fv glass"><div class="fvh">${ic("file",20)}<input class="input fvn" placeholder="اسم الملف"><button class="btn ghost icon fvx" style="width:36px;height:36px">${ic("x",16)}</button></div>
-  <div class="fvt"><button class="btn sm soft fvm"></button><button class="btn sm ghost fvw">التفاف الأسطر</button><button class="btn sm ghost fvc">${ic("check",14)}نسخ</button><button class="btn sm ghost fvd">${ic("download",14)}تنزيل</button><span style="flex:1"></span><button class="btn sm fvs">حفظ</button></div>
-  <textarea spellcheck="false" readonly></textarea><div class="fvf"></div></div>`;
-  const $f=q=>bg.querySelector(q),ta=$f("textarea"),nm=$f(".fvn"),inf=$f(".fvf");
-  ta.value=orig;nm.value=a.name;
-  const info=()=>{inf.textContent=`${ta.value.split("\n").length} سطر • ${ta.value.length} حرف`+(dirty?" • تعديلات غير محفوظة":"");$f(".fvs").disabled=!dirty;};
-  const mode=()=>{ta.readOnly=!editing;$f(".fvm").innerHTML=editing?ic("text",14)+"وضع العرض":ic("pen",14)+"وضع التعديل";if(editing)ta.focus();};
-  const save=async()=>{if(!dirty)return;await writeFileBlob(n,a,ta.value,nm.value.trim()||a.name);dirty=false;renderAttachments();info();toast("تم حفظ الملف");};
-  const close=async()=>{if(dirty&&!(await uiConfirm("تعديلات غير محفوظة","هل تريد الإغلاق وتجاهل التعديلات؟","تجاهل")))return;document.removeEventListener("keydown",key,true);bg.remove();};
-  const key=e=>{if(!document.body.contains(bg)||document.querySelector(".modal-bg"))return;if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="s"){e.preventDefault();save();}else if(e.key==="Escape")close();};
-  document.addEventListener("keydown",key,true);
-  ta.oninput=()=>{dirty=true;info();};
-  ta.onkeydown=e=>{if(e.key==="Tab"&&editing){e.preventDefault();document.execCommand("insertText",false,"\t");}};
-  nm.oninput=()=>{dirty=true;info();};
-  $f(".fvm").onclick=()=>{editing=!editing;mode();};
-  $f(".fvw").onclick=()=>ta.classList.toggle("wrap");
-  $f(".fvc").onclick=async()=>toast((await copyText(ta.value))?"تم النسخ":"تعذر النسخ");
-  $f(".fvd").onclick=()=>saveFile(nm.value.trim()||a.name,ta.value);
-  $f(".fvs").onclick=save;$f(".fvx").onclick=close;
-  bg.onmousedown=e=>{if(e.target===bg)close();};
-  document.body.appendChild(bg);mode();info();
-}
-
 /* Player */
 const PL={au:new Audio(),entry:null,url:null,rate:1,seeking:false};
 const RATES=[1,1.25,1.5,1.75,2,0.75];
@@ -2156,7 +2121,7 @@ $("#genCards").onclick=async()=>{
     const arr=await s.json(`أنشئ 6 بطاقات مراجعة (أسئلة قصيرة وإجابات دقيقة موجزة) لطالب طب من النص التالي. أعد JSON فقط بالشكل: [{"q":"سؤال","a":"إجابة قصيرة"}] بدون أي نص إضافي.\n\nالنص:\n${text.slice(0,6000)}`,{modelTier:"quick",cache:false});
     const ok=(Array.isArray(arr)?arr:[]).filter(x=>x&&x.q&&x.a);
     ok.forEach(x=>addCard(n.id,String(x.q),String(x.a)));renderRecall();toast(`تمت إضافة ${ok.length} بطاقات`);
-  }catch(_){toast("تعذر توليد البطاقات");}
+  }catch(e){toast((e&&e.userMsg)||"تعذر توليد البطاقات");}
 };
 let QZ=null;
 async function startQuiz(){
@@ -2173,7 +2138,7 @@ async function startQuiz(){
     const qs=(Array.isArray(arr)?arr:[]).filter(x=>x&&x.q&&Array.isArray(x.o)&&x.o.length>=2&&Number.isInteger(x.a)&&x.a>=0&&x.a<x.o.length);
     if(!qs.length)throw new Error("empty");
     QZ={qs,i:0,score:0,wrong:[],noteId:n?n.id:null,label};quizShow();
-  }catch(e){box.innerHTML='<div class="empty">تعذر إنشاء الاختبار الآن. حاول مرة أخرى.</div>';}
+  }catch(e){box.innerHTML='<div class="empty"></div>';box.firstChild.textContent=(e&&e.userMsg)||"تعذر إنشاء الاختبار الآن. حاول مرة أخرى.";}
 }
 function quizShow(){
   const box=$("#quizBox");
@@ -2265,10 +2230,64 @@ $("#exportPlan").onclick=()=>{
 
 /* ---------- AI TUTOR (medical) ---------- */
 let SAMPLE=null,chatHist=[],tmode="explain";
+const gKey=()=>{try{return(localStorage.getItem("mnnote_gemini_key")||"").trim();}catch(e){return "";}};
+const gModel=()=>{try{return(localStorage.getItem("mnnote_gemini_model")||"").trim()||"gemini-2.5-flash";}catch(e){return "gemini-2.5-flash";}};
+function gemErr(e){
+  const st=e&&e.status,msg=String((e&&e.message)||"");
+  let u="تعذر الاتصال بـ Gemini. تحقق من الإنترنت.";
+  if(e&&e.code==="nomodel")u="اسم النموذج غير متاح. غيّره في الإعدادات إلى gemini-2.5-flash أو اتركه فارغاً.";
+  else if(st===429)u="وصلت إلى الحد المجاني المؤقت. انتظر دقيقة ثم حاول.";
+  else if(st===400&&/API key/i.test(msg))u="مفتاح Gemini غير صحيح. تحقق منه في الإعدادات.";
+  else if(st===403)u="Google رفضت الطلب (403). تحقق من المفتاح ومن أن بلدك مدعوم، وقد تطلب Google توثيق حسابك.";
+  else if(e&&e.code==="blocked")u="لم تُرجع Gemini نصاً (قد يكون الطلب حُجب). أعد صياغة السؤال.";
+  else if(st)u="خطأ من Gemini ("+st+").";
+  const er=new Error(u);er.userMsg=u;return er;
+}
+async function geminiCall(prompt,json){
+  const key=gKey();
+  const models=[gModel(),"gemini-2.5-flash","gemini-flash-latest"].filter((m,i,a)=>m&&a.indexOf(m)===i);
+  const body={contents:[{role:"user",parts:[{text:prompt}]}],generationConfig:Object.assign({temperature:.4},json?{responseMimeType:"application/json"}:{})};
+  let sawModelErr=false;
+  for(const m of models){
+    let r;
+    try{r=await fetch("https://generativelanguage.googleapis.com/v1beta/models/"+encodeURIComponent(m)+":generateContent",{method:"POST",headers:{"Content-Type":"application/json","x-goog-api-key":key},body:JSON.stringify(body)});}
+    catch(e){throw gemErr(e);}
+    if(r.status===404){sawModelErr=true;continue;}
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok){const e=new Error((j.error&&j.error.message)||"HTTP "+r.status);e.status=r.status;throw gemErr(e);}
+    const parts=(j.candidates&&j.candidates[0]&&j.candidates[0].content&&j.candidates[0].content.parts)||[];
+    const t=parts.map(x=>x.text||"").join("");
+    if(!t){const e=new Error("empty");e.code="blocked";throw gemErr(e);}
+    return t;
+  }
+  const e=new Error("model");e.code="nomodel";throw gemErr(sawModelErr?e:e);
+}
+function parseJsonLoose(t){
+  t=String(t).trim().replace(/^```(?:json)?/i,"").replace(/```$/,"").trim();
+  try{return JSON.parse(t);}catch(e){}
+  const a=t.indexOf("["),b=t.lastIndexOf("]");if(a>=0&&b>a){try{return JSON.parse(t.slice(a,b+1));}catch(e){}}
+  throw new Error("json");
+}
+function makeGemini(){
+  if(!gKey())return null;
+  const fn=async(input,opts={})=>{
+    const text=Array.isArray(input)?input.map(m=>m.content).join("\n\n"):String(input);
+    const out=await geminiCall(text,false);
+    if(opts.onText)opts.onText({text:out});
+    return{text:out};
+  };
+  fn.json=async(p)=>parseJsonLoose(await geminiCall(p,true));
+  return fn;
+}
 async function getSample(){
   if(SAMPLE)return SAMPLE;
-  try{const s=window.claude&&window.claude.use?await window.claude.use("sample"):null;if(!s){$("#tutorStatus").textContent="المعلم الذكي غير متاح هنا";toast("المعلم الذكي غير متاح في هذه الجلسة");return null;}SAMPLE=s;$("#tutorStatus").textContent="● متصل";return s;}
-  catch(_){$("#tutorStatus").textContent="تعذر التشغيل";return null;}
+  try{const s=window.claude&&window.claude.use?await window.claude.use("sample"):null;if(s){SAMPLE=s;$("#tutorStatus").textContent="● متصل (Claude)";return s;}}catch(_){}
+  const g=makeGemini();
+  if(g){$("#tutorStatus").textContent="● Gemini";return g;}
+  $("#tutorStatus").textContent="يلزم مفتاح Gemini";
+  const r=await dlg({title:"المعلم الذكي يحتاج مفتاحاً مجانياً",body:"خارج Claude يعمل المعلم عبر مفتاح Gemini المجاني من Google. أضفه مرة واحدة من الإعدادات.",buttons:[{label:"لاحقاً",cls:"ghost",value:false},{label:"فتح الإعدادات",value:true}]});
+  if(r){go("settings");setTimeout(()=>{const k=$("#gemKey");if(k){k.scrollIntoView({block:"center"});k.focus();}},200);}
+  return null;
 }
 const SYS=`أنت معلم ذكي لطلاب كليات الطب داخل تطبيق MNnote+. اكتب بالعربية الواضحة واذكر المصطلحات الطبية بالإنجليزية بين قوسين. هدفك التعلم والامتحانات، ولا تقدّم تشخيصًا أو علاجًا لحالة حقيقية لشخص بعينه، وإذا سُئلت عن حالة شخصية فانصح بمراجعة الطبيب. وضّح عند عدم اليقين ولا تخترع معلومات أو جرعات.
 - شرح: تعريف ثم آلية/فيزيولوجيا ثم أهمية سريرية ثم نقاط للحفظ، باختصار.
@@ -2323,7 +2342,7 @@ async function sendTutor(){
   try{
     const res=await s([{role:"user",content:SYS+(history?"\n\nالمحادثة السابقة:\n"+history:"")+"\n\nالسؤال الحالي:\n"+userMsg}],{modelTier:"default",cache:false,onText:({text})=>{bubble.innerHTML=fmtMd(text);$("#chat").scrollTop=1e9;}});
     bubble.innerHTML=fmtMd(res.text);chatHist.push({role:"user",content:userMsg},{role:"assistant",content:res.text});
-  }catch(_){bubble.textContent="تعذر الحصول على رد الآن، حاول مرة أخرى.";}
+  }catch(e){bubble.textContent=(e&&e.userMsg)||"تعذر الحصول على رد الآن، حاول مرة أخرى.";}
 }
 
 /* ---------- SPLIT VIEW ---------- */
@@ -2348,13 +2367,23 @@ $$("#splitSeg button").forEach(b=>b.onclick=()=>setSplit(b.dataset.sp));
 
 /* ---------- SETTINGS ---------- */
 function renderSettings(){
+  if(document.activeElement!==$("#gemKey"))$("#gemKey").value=gKey();
+  if(document.activeElement!==$("#gemModel")){let gm="";try{gm=localStorage.getItem("mnnote_gemini_model")||"";}catch(e){}$("#gemModel").value=gm;}
   $("#email").value=S.meta.settings.email||"";$("#recQ").value=String(S.meta.settings.recBps||16000);
   const cloud=P.mode==="cloud";
   $("#setAcc").innerHTML=cloud?`<p style="margin:0" class="muted">${ic("cloud",16)} المزامنة السحابية مفعّلة لحساب <b></b>.</p>`:`<p style="margin:0" class="muted">وضع الضيف المحلي: البيانات على هذا الجهاز فقط.</p>`;
   if(cloud)$("#setAcc b").textContent=(P.me&&P.me.name)||"Claude";
   renderUser();
-  try{if(navigator.storage&&navigator.storage.estimate)navigator.storage.estimate().then(e=>{$("#storeInfo").textContent=`المساحة المستخدمة على هذا الجهاز: ${fmtSize(e.usage||0)}`;});}catch(e){}
+  $("#imgQ").value=String(S.meta.settings.imgMax||2400);updateStorageCard();
 }
+$("#gemSave").onclick=()=>{try{const k=$("#gemKey").value.trim(),m=$("#gemModel").value.trim();if(k)localStorage.setItem("mnnote_gemini_key",k);else localStorage.removeItem("mnnote_gemini_key");if(m)localStorage.setItem("mnnote_gemini_model",m);else localStorage.removeItem("mnnote_gemini_model");SAMPLE=null;toast("تم الحفظ على هذا الجهاز");}catch(e){toast("تعذر الحفظ (قد يكون التخزين محظوراً)");}};
+$("#gemClear").onclick=()=>{try{localStorage.removeItem("mnnote_gemini_key");}catch(e){}$("#gemKey").value="";toast("حُذف المفتاح من هذا الجهاز");};
+$("#gemTest").onclick=async()=>{
+  try{const k=$("#gemKey").value.trim();if(k)localStorage.setItem("mnnote_gemini_key",k);const m=$("#gemModel").value.trim();if(m)localStorage.setItem("mnnote_gemini_model",m);}catch(e){}
+  if(!gKey())return toast("أدخل المفتاح أولاً");
+  toast("جارٍ الاختبار…");
+  try{const t=await geminiCall("أجب بكلمة واحدة فقط: تم",false);toast("يعمل ✓  "+t.trim().slice(0,30));}catch(e){toast(e.userMsg||"فشل الاختبار");}
+};
 $("#recQ").onchange=e=>{S.meta.settings.recBps=+e.target.value;persistMeta();toast("سيُطبَّق على التسجيلات القادمة");};
 $("#saveEmail").onclick=()=>{S.meta.settings.email=$("#email").value.trim();persistMeta();toast("تم حفظ البريد");};
 $("#notifPerm").onclick=async()=>{try{if(!("Notification" in window))return toast("الإشعارات غير مدعومة");const p=await Notification.requestPermission();toast(p==="granted"?"تم تفعيل الإشعارات":"لم تُفعَّل الإشعارات");}catch(e){toast("الإشعارات غير متاحة داخل هذه الصفحة");}};
@@ -2364,7 +2393,7 @@ $("#restore").onchange=async e=>{
   const f=e.target.files[0];if(!f)return;
   try{
     const d=JSON.parse(await f.text());let added=0;
-    (d.notes||[]).forEach(x=>{const n=normNote(x);n.audio=[];n.hasInk=false;if(!S.notes.some(y=>y.id===n.id)){S.notes.push(n);persistNote(n);added++;}});
+    (d.notes||[]).forEach(x=>{const n=normNote(x);n.audio=[];n.files=[];n.hasInk=false;if(!S.notes.some(y=>y.id===n.id)){S.notes.push(n);persistNote(n);added++;}});
     const m=d.meta||{lectures:d.lectures,exams:d.exams,books:[]};
     (m.books||[]).forEach(b=>{if(!books().some(x=>x.id===b.id||x.name===b.name))books().push(b);});
     const lid=new Set(S.meta.lectures.map(x=>x.id));(m.lectures||[]).forEach(x=>{if(!lid.has(x.id))S.meta.lectures.push(x);});
@@ -2388,6 +2417,7 @@ function renderAll(){
 async function boot(){
   hydrate();themeIcon();
   await IDB.open();
+  askPersist();
   LOCAL=await loadLocalData();S=LOCAL;
   ensureMigration();
   renderAll();setTutorMode("explain");setSync("local");
@@ -2455,6 +2485,61 @@ async function boot(){
   apply();sync();
 })();
 console.log("MNnote+ © 2026 Tecnexus555@gmail.com");
+/* ---------- STORAGE & FILES ---------- */
+async function askPersist(){try{if(navigator.storage&&navigator.storage.persist){if(navigator.storage.persisted&&await navigator.storage.persisted())return true;return await navigator.storage.persist();}}catch(e){}return false;}
+let storeWarned=false;
+async function updateStorageCard(){
+  const bar=$("#storeBar"),txt=$("#storeTxt");if(!bar)return;
+  let usage=0,quota=0,persisted=false;
+  try{if(navigator.storage&&navigator.storage.estimate){const e=await navigator.storage.estimate();usage=e.usage||0;quota=e.quota||0;}if(navigator.storage&&navigator.storage.persisted)persisted=await navigator.storage.persisted();}catch(e){}
+  const pct=quota?Math.min(100,usage/quota*100):0;
+  bar.style.width=pct+"%";
+  txt.textContent=quota?`المستخدم ${fmtSize(usage)} من ${fmtSize(quota)} المتاحة لهذا الموقع على جهازك (${pct.toFixed(1)}%)`:"تعذر قراءة المساحة في هذا المتصفح";
+  const pp=$("#storePersist");pp.textContent=persisted?"محمي من الحذف التلقائي":"غير محمي من الحذف التلقائي";pp.className="pill "+(persisted?"good":"mid");
+  $("#storePersistBtn").classList.toggle("hidden",persisted||!(navigator.storage&&navigator.storage.persist));
+  if(quota&&pct>80&&!storeWarned){storeWarned=true;toast("المساحة على جهازك شارفت على الامتلاء ("+Math.round(pct)+"%)");}
+}
+$("#storePersistBtn").onclick=async()=>{const ok=await askPersist();toast(ok?"تمت حماية بياناتك من الحذف التلقائي":"رفض المتصفح الطلب. ثبّت التطبيق على الشاشة الرئيسية ثم أعد المحاولة");updateStorageCard();};
+$("#imgQ").onchange=e=>{S.meta.settings.imgMax=+e.target.value;persistMeta();toast("سيُطبَّق على الصور القادمة");};
+$("#fileBtn").onclick=()=>{if(!cur())return toast("افتح صفحة أولاً");$("#attFile").click();};
+$("#attFile").onchange=async e=>{
+  const n=cur(),list=[...e.target.files];e.target.value="";if(!n||!list.length)return;
+  let free=Infinity;try{const es=await navigator.storage.estimate();if(es.quota)free=es.quota-es.usage;}catch(x){}
+  if(!IDB.db&&P.mode!=="cloud")toast("تحذير: التخزين المحلي غير متاح، لن تبقى الملفات بعد إغلاق الصفحة");
+  let added=0;
+  for(const f of list){
+    if(f.size>free*0.9){toast("لا تكفي المساحة المتبقية لـ «"+f.name+"» ("+fmtSize(f.size)+")");continue;}
+    const id=uid()+uid();
+    try{await IDB.put("blobs",id,f);}catch(err){toast("تعذر حفظ «"+f.name+"» (المساحة ممتلئة؟)");continue;}
+    free-=f.size;
+    const entry={id,name:f.name,size:f.size,type:f.type||"application/octet-stream",fmt:2,chunks:Math.ceil(f.size/BCH),up:0};
+    if(P.mode==="cloud"&&f.size>CLOUD_FILE_MAX){entry.localOnly=true;toast("«"+f.name+"» كبير (فوق 40MB)، سيُحفظ على هذا الجهاز فقط");}
+    n.files.push(entry);added++;
+  }
+  if(added){n.updated=Date.now();persistNote(n);renderAttachments();renderPages();pumpUploads();toast("أُرفق "+added+" ملف");updateStorageCard();}
+};
+async function openFile(f,dl){
+  toast("جارٍ التحميل…");
+  const b=await blobGet(f,()=>{});
+  if(!b){toast("الملف غير متاح على هذا الجهاز"+((f.up||0)<f.chunks?" (لم يكتمل رفعه بعد)":""));return;}
+  const blob=new Blob([b],{type:f.type||b.type||"application/octet-stream"});
+  if(DL){try{await DL.save({filename:f.name,data:blob});toast("تم الحفظ");}catch(e){if(!e||e.code!=="declined")toast("هذا النوع لا يمكن حفظه من داخل Claude. افتح نسخة الموقع على GitHub لفتح الملفات.");}return;}
+  const u=URL.createObjectURL(blob);
+  if(!dl&&/pdf|^image\/|^text\//.test(f.type||"")){const w=window.open(u,"_blank");if(w){setTimeout(()=>URL.revokeObjectURL(u),120000);return;}}
+  const a=document.createElement("a");a.href=u;a.download=f.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),10000);
+}
+/* ---------- PWA: install + offline ---------- */
+let deferredInstall=null;
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredInstall=e;});
+window.addEventListener("appinstalled",()=>{deferredInstall=null;toast("تم تثبيت التطبيق");$("#installCard").classList.add("hidden");});
+$("#installBtn").onclick=async()=>{
+  if(deferredInstall){deferredInstall.prompt();try{await deferredInstall.userChoice;}catch(e){}deferredInstall=null;return;}
+  await dlg({title:"تثبيت التطبيق",body:"أندرويد (Chrome): اضغط قائمة النقاط الثلاث ثم «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية».\n\nآيفون (Safari): اضغط زر المشاركة ثم «إضافة إلى الشاشة الرئيسية».\n\nإن لم يظهر الخيار فتأكد أنك تفتح الرابط من المتصفح مباشرة (وليس من داخل تطبيق آخر).",buttons:[{label:"حسناً",value:true}]});
+};
+if(window.claude||(window.matchMedia&&matchMedia("(display-mode: standalone)").matches))$("#installCard").classList.add("hidden");
+if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)&&window.self===window.top&&!window.claude){
+  window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js").catch(()=>{});});
+}
 boot();
 if(window.__TEST)window.__app={S:()=>S,P,UI,INK,REC:()=>REC,inkCache};
 })();
