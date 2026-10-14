@@ -6,3 +6,11 @@ window.MN_CONFIG = {
   googleClientId: "",
   tutorProxyUrl: ""
 };
+
+/* إعدادات Firebase لتسجيل الدخول بجوجل ومزامنة البيانات */
+window.MN_FIREBASE = {
+  apiKey: "AIzaSyDVH7rhRO222-3-on_uzNezhpV8alGgamU",
+  authDomain: "mnnote-6be08.firebaseapp.com",
+  projectId: "mnnote-6be08",
+  appId: "1:611952208092:web:1fed896f6c9bf1d117ac19"
+};

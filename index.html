@@ -737,9 +737,17 @@ table.t tr:last-child td{border-bottom:0}
   <div id="accBody"></div>
 </div></div>
 
+<script src="config.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 (() => {
 "use strict";
+/* ===== إعدادات Firebase: الصق هنا قيم مشروعك (Project settings > Your apps > Web) ===== */
+const FIREBASE_CONFIG=window.MN_FIREBASE||{apiKey:"",authDomain:"",projectId:"",appId:""};
+let FB=null;
+const ecode=e=>String(e&&e.code||"").replace(/-/g,"_");
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const uid=()=>Math.random().toString(36).slice(2,10);
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -952,8 +960,8 @@ async function flush(key){
   try{
     do{
       w.again=false;w.dirty=false;
-      try{await w.ref.set(typeof w.data==="function"?w.data():w.data);tries=0;}
-      catch(e){if(e&&(e.code==="unavailable"||e.code==="resource_exhausted")&&tries++<3){await sleep(1500+Math.random()*1500);w.again=true;w.dirty=true;}else throw e;}
+      try{await w.ref.set(clone(typeof w.data==="function"?w.data():w.data));tries=0;}
+      catch(e){if(e&&(ecode(e)==="unavailable"||ecode(e)==="resource_exhausted")&&tries++<3){await sleep(1500+Math.random()*1500);w.again=true;w.dirty=true;}else throw e;}
     }while(w.again);
   }catch(e){w.err=true;handleDbErr(e);}
   finally{w.busy=false;}
@@ -968,9 +976,10 @@ function flushAllNow(){inkFlush();if(lsT){clearTimeout(lsT);lsT=null;localSaveNo
 document.addEventListener("visibilitychange",()=>{if(document.hidden)flushAllNow();});
 window.addEventListener("pagehide",flushAllNow);
 function handleDbErr(e){
-  const c=e&&e.code;
+  const c=ecode(e);
   if(c==="quota_exceeded")toast("امتلأت مساحة التخزين السحابية، احذف تسجيلات أو ملاحظات قديمة");
   else if(c==="revoked"){toast("انتهت صلاحية المزامنة، تعمل الآن محليًا");fallbackLocal("revoked");}
+  else if(c==="permission_denied")toast("لا توجد صلاحية للحفظ السحابي، تحقق من قواعد Firestore وتسجيل الدخول");
   else if(c==="invalid_argument")toast("تعذر الحفظ السحابي. قد تكون صلاحيتك للعرض فقط");
   else if(c==="resource_exhausted")toast("عمليات كثيرة، ستُعاد المحاولة تلقائيًا");
   else toast("تعذر الاتصال بالسحابة");
@@ -1014,7 +1023,7 @@ function b64FromBytes(u8){let s="";for(let i=0;i<u8.length;i+=0x8000)s+=String.f
 function bytesFromB64(b){const s=atob(b),u=new Uint8Array(s.length);for(let i=0;i<s.length;i++)u[i]=s.charCodeAt(i);return u;}
 async function retry(fn){
   let t=0;
-  for(;;){try{return await fn();}catch(e){const c=e&&e.code;if((c==="unavailable"||c==="resource_exhausted")&&t++<5){await sleep(1200*t+Math.random()*800);continue;}throw e;}}
+  for(;;){try{return await fn();}catch(e){const c=ecode(e);if((c==="unavailable"||c==="resource_exhausted")&&t++<5){await sleep(1200*t+Math.random()*800);continue;}throw e;}}
 }
 async function uploadBlob(a,blob,onProg){
   const n=Math.ceil(blob.size/BCH),base=chunkColl();
@@ -1212,6 +1221,7 @@ function accHTML(){
     ${localHasData()?'<button class="btn" id="accUp" style="width:100%;margin-top:6px">رفع بيانات هذا الجهاز المحلية</button>':""}
     <button class="btn ghost" id="accSet" style="width:100%;margin-top:8px">الإعدادات</button>`;
   }
+  if(FB&&!P.me)return `<p style="margin-top:0"><b>سجّل الدخول لتفعيل المزامنة</b></p><p class="muted" style="line-height:1.9">سجّل الدخول بحساب Google لتتزامن صفحاتك ومحاضراتك وبطاقاتك وتسجيلاتك تلقائيًا بين كل أجهزتك. بياناتك خاصة بك ولا يراها غيرك.</p><button class="btn" id="accGoogle" style="width:100%">تسجيل الدخول بحساب Google</button><button class="btn ghost" id="accSet" style="width:100%;margin-top:8px">الإعدادات</button>`;
   const why={readonly:"صلاحيتك على هذه الصفحة «عرض فقط»، لذلك لا تُحفظ بياناتك في السحابة. اطلب من صاحب الصفحة منحك صلاحية «مساهم» (Contributor) لتفعيل المزامنة.",
              noid:"لا يوجد معرّف حساب في هذه الجلسة، لذلك تعمل محليًا.",
              error:"تعذر الاتصال بالسحابة، تعمل الآن محليًا.",revoked:"انتهت صلاحية المزامنة، تعمل الآن محليًا."}[P.reason]
@@ -1229,6 +1239,8 @@ function openAcc(){
     const up=$("#accUp");if(up)up.onclick=()=>{$("#accBg").classList.add("hidden");uploadLocal();};
   }else{const r=$("#accRetry");if(r)r.onclick=()=>location.reload();}
   $("#accSet").onclick=()=>{$("#accBg").classList.add("hidden");go("settings");};
+  const g=$("#accGoogle");if(g)g.onclick=fbSignIn;
+  if(FB&&P.mode==="cloud"){const b=document.createElement("button");b.className="btn ghost";b.style.cssText="width:100%;margin-top:8px";b.textContent="تسجيل الخروج";b.onclick=fbSignOut;$("#accBody").appendChild(b);}
   $("#accBg").classList.remove("hidden");
 }
 $("#accBtn").onclick=openAcc;$("#avatarTop").onclick=openAcc;$("#syncPill").onclick=openAcc;$("#setAccBtn").onclick=openAcc;
@@ -2414,6 +2426,48 @@ function renderAll(){
   renderLibrary();if(UI.bookId){renderPages();}
   renderRecall();renderLectures();renderExams();renderSettings();renderToday();renderUser();syncRunning();updateTopbar();
 }
+function goCloud(dbNs,me){
+  P.me=me;P.mode="cloud";P.db=dbNs;P.uid=me.id;P.coll=dbNs.collection("data/users/"+me.id);
+  S={notes:[],meta:DEFAULT_META()};curId=null;P.loaded=false;
+  setSync("loading");renderAll();subscribe();
+  setTimeout(()=>{if(P.mode==="cloud"&&!P.loaded){toast("تعذر الاتصال بالسحابة، تعمل محليًا");fallbackLocal("error");}},15000);
+}
+const fbMe=u=>({id:u.uid,name:u.displayName||(u.email||"").split("@")[0],email:u.email||"",avatarUrl:u.photoURL||""});
+function startFirebase(){
+  if(!window.firebase||!FIREBASE_CONFIG.apiKey||!FIREBASE_CONFIG.projectId){recoverParts();maybeSeed();return;}
+  try{
+    firebase.initializeApp(FIREBASE_CONFIG);
+    const auth=firebase.auth(),db=firebase.firestore();
+    try{db.enablePersistence({synchronizeTabs:true}).catch(()=>{});}catch(e){}
+    FB={auth,db};
+    auth.getRedirectResult().catch(()=>{});
+    let first=true;
+    auth.onAuthStateChanged(u=>{
+      if(!first)return;first=false;
+      if(!u){
+        P.reason="signin";renderUser();recoverParts();maybeSeed();
+        let shown=null;try{shown=sessionStorage.getItem("mnnote_login_shown");sessionStorage.setItem("mnnote_login_shown","1");}catch(e){}
+        if(!shown)setTimeout(openAcc,700);
+        return;
+      }
+      goCloud(db,fbMe(u));
+    });
+  }catch(e){P.reason="error";renderUser();recoverParts();maybeSeed();}
+}
+async function fbSignIn(){
+  if(!FB)return toast("المزامنة غير مفعّلة");
+  const prov=new firebase.auth.GoogleAuthProvider();prov.setCustomParameters({prompt:"select_account"});
+  try{await FB.auth.signInWithPopup(prov);location.reload();}
+  catch(e){
+    const c=ecode(e);
+    if(c==="popup_blocked"||c==="operation_not_supported_in_this_environment"||c==="web_storage_unsupported"){try{await FB.auth.signInWithRedirect(prov);}catch(_){toast("تعذر تسجيل الدخول");}}
+    else if(c!=="popup_closed_by_user"&&c!=="cancelled_popup_request")toast(c==="unauthorized_domain"?"أضف نطاق الموقع في Authorized domains داخل Firebase":"تعذر تسجيل الدخول بجوجل");
+  }
+}
+async function fbSignOut(){
+  if(!(await uiConfirm("تسجيل الخروج","ستعمل الصفحة محليًا حتى تسجّل الدخول مجددًا.","خروج")))return;
+  flushAllNow();try{await FB.auth.signOut();}catch(e){}location.reload();
+}
 async function boot(){
   hydrate();themeIcon();
   await IDB.open();
@@ -2422,7 +2476,7 @@ async function boot(){
   ensureMigration();
   renderAll();setTutorMode("explain");setSync("local");
   const c=window.claude;
-  if(!c||!c.use){recoverParts();maybeSeed();return;}
+  if(!c||!c.use){return startFirebase();}
   const get=n=>c.use(n).catch(()=>null);
   let dbNs=null,userNs=null;
   try{[dbNs,userNs,DL]=await Promise.all([get("db"),get("user"),get("downloads")]);}catch(e){}
