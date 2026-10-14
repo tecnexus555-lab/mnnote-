@@ -2270,6 +2270,7 @@ async function proxyCall(prompt,json){
     else if(r.status===403)u="حسابك غير مسموح له باستخدام المعلم الذكي.";
     else if(r.status===429)u=(j.error==="daily_limit")?"وصلت حدّك اليومي من أسئلة المعلم. جرّب غداً.":"الخدمة مشغولة مؤقتاً. انتظر دقيقة ثم حاول.";
     else if(r.status===413)u="النص طويل جداً. اختصره ثم حاول.";
+    else if(r.status===502||r.status===500)u="تعذر الاتصال بـ Gemini عبر الخادم ("+r.status+"): "+String(j.error||"").slice(0,160);
     const e=new Error(u);e.userMsg=u;throw e;
   }
   if(!j.text){const e=new Error("empty");e.code="blocked";throw gemErr(e);}
