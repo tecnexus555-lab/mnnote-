@@ -2255,7 +2255,28 @@ function gemErr(e){
   else if(st)u="خطأ من Gemini ("+st+").";
   const er=new Error(u);er.userMsg=u;return er;
 }
+const proxyUrl=()=>((window.MN_CONFIG&&window.MN_CONFIG.tutorProxyUrl)||"").trim();
+const proxyOn=()=>!!(proxyUrl()&&FB&&FB.auth&&FB.auth.currentUser);
+async function proxyCall(prompt,json){
+  let tok;
+  try{tok=await FB.auth.currentUser.getIdToken();}catch(e){throw gemErr(Object.assign(new Error("auth"),{status:401}));}
+  let r;
+  try{r=await fetch(proxyUrl(),{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+tok},body:JSON.stringify({prompt:prompt,json:!!json})});}
+  catch(e){throw gemErr(e);}
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok){
+    let u="خطأ من خادم المعلم ("+r.status+").";
+    if(r.status===401)u="سجّل الدخول بحساب Google أولاً (أو أعد تسجيل الدخول) لاستخدام المعلم الذكي.";
+    else if(r.status===403)u="حسابك غير مسموح له باستخدام المعلم الذكي.";
+    else if(r.status===429)u=(j.error==="daily_limit")?"وصلت حدّك اليومي من أسئلة المعلم. جرّب غداً.":"الخدمة مشغولة مؤقتاً. انتظر دقيقة ثم حاول.";
+    else if(r.status===413)u="النص طويل جداً. اختصره ثم حاول.";
+    const e=new Error(u);e.userMsg=u;throw e;
+  }
+  if(!j.text){const e=new Error("empty");e.code="blocked";throw gemErr(e);}
+  return j.text;
+}
 async function geminiCall(prompt,json){
+  if(proxyOn())return proxyCall(prompt,json);
   const key=gKey();
   const models=[gModel(),"gemini-2.5-flash","gemini-flash-latest"].filter((m,i,a)=>m&&a.indexOf(m)===i);
   const body={contents:[{role:"user",parts:[{text:prompt}]}],generationConfig:Object.assign({temperature:.4},json?{responseMimeType:"application/json"}:{})};
@@ -2281,7 +2302,7 @@ function parseJsonLoose(t){
   throw new Error("json");
 }
 function makeGemini(){
-  if(!gKey())return null;
+  if(!proxyOn()&&!gKey())return null;
   const fn=async(input,opts={})=>{
     const text=Array.isArray(input)?input.map(m=>m.content).join("\n\n"):String(input);
     const out=await geminiCall(text,false);
@@ -2295,7 +2316,13 @@ async function getSample(){
   if(SAMPLE)return SAMPLE;
   try{const s=window.claude&&window.claude.use?await window.claude.use("sample"):null;if(s){SAMPLE=s;$("#tutorStatus").textContent="● متصل (Claude)";return s;}}catch(_){}
   const g=makeGemini();
-  if(g){$("#tutorStatus").textContent="● Gemini";return g;}
+  if(g){$("#tutorStatus").textContent=proxyOn()?"● المعلم الذكي":"● Gemini";return g;}
+  if(proxyUrl()){
+    $("#tutorStatus").textContent="يلزم تسجيل الدخول";
+    const r2=await dlg({title:"سجّل الدخول لتشغيل المعلم الذكي",body:"المعلم الذكي متاح لكل مستخدم بحساب Google الخاص به، بدون أي مفتاح. سجّل الدخول ثم أعد المحاولة.",buttons:[{label:"لاحقاً",cls:"ghost",value:false},{label:"تسجيل الدخول",value:true}]});
+    if(r2){try{openAcc();}catch(_){}}
+    return null;
+  }
   $("#tutorStatus").textContent="يلزم مفتاح Gemini";
   const r=await dlg({title:"المعلم الذكي يحتاج مفتاحاً مجانياً",body:"خارج Claude يعمل المعلم عبر مفتاح Gemini المجاني من Google. أضفه مرة واحدة من الإعدادات.",buttons:[{label:"لاحقاً",cls:"ghost",value:false},{label:"فتح الإعدادات",value:true}]});
   if(r){go("settings");setTimeout(()=>{const k=$("#gemKey");if(k){k.scrollIntoView({block:"center"});k.focus();}},200);}
