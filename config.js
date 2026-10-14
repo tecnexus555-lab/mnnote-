@@ -1,7 +1,7 @@
 /* إعدادات MNnote+ — عدّل هذا الملف فقط (لا حاجة لتعديل index.html)
-   1) googleClientId : معرّف عميل OAuth من Google Cloud (نوع Web application)
-   2) tutorProxyUrl  : رابط خادم المعلم الذكي (Cloudflare Worker) بعد نشره
-   اتركهما فارغين لتعمل الأدوات الأخرى بدون تسجيل دخول Google. */
+   tutorProxyUrl : رابط خادم المعلم الذكي (Cloudflare Worker) بعد نشره
+   اتركه فارغاً ليبقى المعلم يعمل بمفتاح Gemini الخاص بكل مستخدم.
+   googleClientId لم يعد مطلوباً (تسجيل الدخول عبر Firebase). */
 window.MN_CONFIG = {
   googleClientId: "",
   tutorProxyUrl: ""
@@ -9,8 +9,8 @@ window.MN_CONFIG = {
 
 /* إعدادات Firebase لتسجيل الدخول بجوجل ومزامنة البيانات */
 window.MN_FIREBASE = {
-  apiKey: "AIzaSyDVH7rhRO222-3-on_uzNezhpV8alGgamU",
-  authDomain: "mnnote-6be08.firebaseapp.com",
-  projectId: "mnnote-6be08",
-  appId: "1:611952208092:web:1fed896f6c9bf1d117ac19"
+  apiKey: "AIzaSyCSZqCpy_4TpVvm11ocaRtGWZ_xYjqQTtE",
+  authDomain: "mnnote-57100.firebaseapp.com",
+  projectId: "mnnote-57100",
+  appId: "1:980721907464:web:dd0037605d8e80a318debd"
 };
