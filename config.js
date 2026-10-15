@@ -4,7 +4,7 @@
    googleClientId لم يعد مطلوباً (تسجيل الدخول عبر Firebase). */
 window.MN_CONFIG = {
   googleClientId: "",
-  tutorProxyUrl: "https://mnnote-tutor.tecnexus555.workers.dev"
+  tutorProxyUrl: ""
 };
 
 /* إعدادات Firebase لتسجيل الدخول بجوجل ومزامنة البيانات */
