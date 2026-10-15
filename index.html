@@ -624,6 +624,39 @@ body:not(.inws) .fab{display:none}
 .pvaic button{border:1px solid var(--edge2);background:var(--glass);color:var(--ink);border-radius:14px;padding:5px 11px;font-size:12.5px;font-weight:600}
 .pvaia{flex:1;min-height:80px;overflow:auto;padding:10px 12px;border-radius:16px;background:var(--field);border:1px solid var(--edge2);line-height:1.9;white-space:pre-wrap}
 .pvaia table{border-collapse:collapse}.pvaia td,.pvaia th{border:1px solid var(--edge);padding:4px 8px}
+
+/* ===== عارض الملفات بتصميم نموذج القلب: صفحة واحدة كاملة + تنقل + شريط مصغّرات ===== */
+.pdfv .pdfbar{flex-direction:column;align-items:stretch;gap:6px;overflow:visible;padding:8px 10px}
+.pdfv .pdfbar>*{flex:none}
+.pvrow{display:flex;align-items:center;gap:8px;min-width:0}
+.pvrow2{flex-wrap:wrap;row-gap:6px}
+.pvsp{flex:1}
+.pvchip{display:flex;align-items:center;gap:8px;min-width:0;flex:1;padding:5px 12px;border-radius:14px;background:var(--field);border:1px solid var(--edge2)}
+.pvchip .pvt{display:block!important;font-weight:600;max-width:none;min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:ltr;text-align:start;unicode-bidi:plaintext}
+.pvkind{flex:none;font-size:11px;font-weight:700;letter-spacing:.3px;padding:2px 8px;border-radius:8px;background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;font-family:"Space Grotesk",sans-serif}
+.pvchip .pvinfo{flex:none}
+.pvgrp{display:inline-flex;align-items:center;gap:4px;padding:3px 5px;border-radius:14px;background:var(--field);border:1px solid var(--edge2)}
+.pvgrp .btn.icon{width:34px;height:34px;font-size:20px}
+.pvpg input{width:48px}
+.pvacts{flex-wrap:wrap}
+.pvscroll{margin:0 10px 8px;border-radius:20px;background:var(--glass);border:1px solid var(--edge2);padding:8px!important;overscroll-behavior:contain;position:relative}
+.pdfv.docked .pvscroll{margin:0 0 8px}
+.pvpages{display:flow-root}
+.pvpage{border-radius:12px;box-shadow:0 18px 40px -16px rgba(0,0,0,.65),0 0 0 1px rgba(255,255,255,.18)}
+.pvnum{top:8px;font-size:11px;opacity:.8}
+.pvscroll.snap{scroll-snap-type:y mandatory}
+.pvscroll.snap .pvpage{scroll-snap-align:center;scroll-snap-stop:always}
+.pvthumbs{direction:ltr;gap:10px;padding:8px 12px 10px;margin:0 10px calc(8px + env(safe-area-inset-bottom,0px));border-radius:18px;background:var(--glass);border:1px solid var(--edge2);align-items:flex-end}
+.pdfv.docked .pvthumbs{margin:0 0 4px}
+.pvthumbs .th{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;min-height:0;min-width:48px;padding:4px 4px 3px;border-radius:12px;background:var(--field);border:2px solid transparent;overflow:visible}
+.pvthumbs .th canvas{display:block;background:#fff;border-radius:5px;box-shadow:0 2px 8px -3px rgba(0,0,0,.5)}
+.pvthumbs .th span{position:static;background:none;padding:0;color:var(--muted);font-size:11px;font-weight:600;font-family:"Space Grotesk",sans-serif}
+.pvthumbs>.th:first-child{margin-inline-start:auto}.pvthumbs>.th:last-child{margin-inline-end:auto}
+.pvthumbs .th.on{border-color:var(--c2);background:var(--hl);box-shadow:0 0 0 3px rgba(34,211,238,.22)}
+.pvthumbs .th.on span{color:var(--c2);font-weight:700}
+.pdfv:has(.pvthumbs:not(.hidden)) .pvtray{bottom:calc(128px + env(safe-area-inset-bottom,0px))}
+.pdfv:fullscreen{background:#0b0c1e;padding:env(safe-area-inset-top,0px) 0 0}
+@media (max-width:860px){.pdfv .pdfbar{margin:6px}.pvscroll{margin:0 6px 6px}.pvthumbs{margin:0 6px calc(6px + env(safe-area-inset-bottom,0px))}.pvchip .pvinfo{display:none}}
 </style>
 </head>
 <body>
@@ -979,20 +1012,25 @@ body:not(.inws) .fab{display:none}
 
 <div class="pdfv hidden" id="pdfv">
   <div class="pdfbar glass">
-    <button class="btn ghost icon" id="pvClose" title="إغلاق"><i data-i="x" data-s="18"></i></button>
-    <span class="pvt" id="pvTitle"></span><span class="pvinfo muted" id="pvInfo"></span>
-    <span class="pvpg"><input class="input" type="number" id="pvPage" min="1" value="1"><span id="pvTotal">/ 1</span></span>
-    <button class="btn ghost icon" id="pvOut" title="تصغير">−</button>
-    <button class="btn ghost icon" id="pvIn" title="تكبير">+</button>
-    <button class="btn ghost sm" id="pvFit" title="ملاءمة العرض">ملاءمة</button>
-    <button class="btn soft sm" id="pvInk" title="أدرج الصفحة الحالية في الرسم اليدوي للتعليق عليها">تعليق بالقلم</button>
-    <button class="btn ghost sm" id="pvText" title="انسخ نص الصفحة إلى ملاحظتك">نسخ النص</button>
-    <button class="btn ok sm" id="pvAsk" title="اسأل المعلم عن هذه الصفحة"><i data-i="sparkle" data-s="15"></i>المعلم</button>
-    <button class="btn soft sm" id="pvAnn" title="اكتب أو ظلّل فوق الملف بالقلم"><i data-i="pen" data-s="15"></i>كتابة</button>
-    <button class="btn soft sm hidden" id="pvEdit" title="تعديل نص الملف"><i data-i="edit" data-s="15"></i>تعديل</button>
-    <button class="btn ok sm hidden" id="pvSave"><i data-i="check" data-s="15"></i>حفظ</button>
-    <button class="btn ghost icon" id="pvDock" title="تثبيت بجانب الملاحظة (عرض مقسّم)"><i data-i="split" data-s="18"></i></button>
-    <button class="btn ghost icon" id="pvDl" title="تنزيل"><i data-i="download" data-s="18"></i></button>
+    <div class="pvrow pvrow1">
+      <button class="btn ghost icon" id="pvClose" title="إغلاق"><i data-i="x" data-s="18"></i></button>
+      <div class="pvchip"><span class="pvkind" id="pvKind">PDF</span><span class="pvt" id="pvTitle"></span><span class="pvinfo muted" id="pvInfo"></span></div>
+      <span class="pvsp"></span>
+      <button class="btn ghost icon" id="pvDock" title="تثبيت بجانب الملاحظة (عرض مقسّم)"><i data-i="split" data-s="18"></i></button>
+      <button class="btn ghost icon" id="pvDl" title="تنزيل"><i data-i="download" data-s="18"></i></button>
+    </div>
+    <div class="pvrow pvrow2">
+      <span class="pvpg pvgrp"><button class="btn ghost icon" id="pvPrev" title="الصفحة السابقة">&#8249;</button><input class="input" type="number" id="pvPage" min="1" value="1"><span id="pvTotal">/ 1</span><button class="btn ghost icon" id="pvNext" title="الصفحة التالية">&#8250;</button></span>
+      <span class="pvgrp"><button class="btn ghost icon" id="pvOut" title="تصغير">&#8722;</button><button class="btn ghost icon" id="pvIn" title="تكبير">+</button><button class="btn ghost sm" id="pvFit" title="ملاءمة الصفحة كاملة">ملاءمة</button><button class="btn ghost icon" id="pvFull" title="ملء الشاشة">&#9974;</button></span>
+      <span class="pvgrp pvacts">
+        <button class="btn soft sm" id="pvInk" title="أدرج الصفحة الحالية في الرسم اليدوي للتعليق عليها">تعليق بالقلم</button>
+        <button class="btn ghost sm" id="pvText" title="انسخ نص الصفحة إلى ملاحظتك">نسخ النص</button>
+        <button class="btn ok sm" id="pvAsk" title="اسأل المعلم عن هذه الصفحة"><i data-i="sparkle" data-s="15"></i>المعلم</button>
+        <button class="btn soft sm" id="pvAnn" title="اكتب أو ظلّل فوق الملف بالقلم"><i data-i="pen" data-s="15"></i>كتابة</button>
+        <button class="btn soft sm hidden" id="pvEdit" title="تعديل نص الملف"><i data-i="edit" data-s="15"></i>تعديل</button>
+        <button class="btn ok sm hidden" id="pvSave"><i data-i="check" data-s="15"></i>حفظ</button>
+      </span>
+    </div>
   </div>
   <div class="pvscroll" id="pvScroll"><div class="pvpages" id="pvPages"></div></div>
   <div class="pvthumbs hidden" id="pvThumbs"></div>
@@ -3499,7 +3537,7 @@ function parseCsv(t){
   if(cur||row.length){row.push(cur);rows.push(row);}return rows;
 }
 async function pvBuildDoc(kind,blob,f){
-  const box=$("#pvPages");box.innerHTML='<div class="pvload">جارٍ التحميل…</div>';
+  $("#pvScroll").classList.remove("snap");const box=$("#pvPages");box.innerHTML='<div class="pvload">جارٍ التحميل…</div>';
   let html="";
   if(kind==="docx")html=await renderDocx(await openZip(blob));
   else if(kind==="pptx")html=await renderPptx(await openZip(blob));
@@ -3518,13 +3556,34 @@ async function pvBuildDoc(kind,blob,f){
   box.querySelectorAll("[data-sh]").forEach(bt=>{if(bt.tagName==="BUTTON")bt.onclick=()=>{box.querySelectorAll("button[data-sh]").forEach(x=>{x.classList.toggle("soft",x===bt);x.classList.toggle("ghost",x!==bt);});box.querySelectorAll("div.sheet").forEach(d=>d.classList.toggle("hidden",d.dataset.sh!==bt.dataset.sh));};});
   box.style.setProperty("--pvz",PV.z);
 }
-const pvWidth=()=>Math.max(200,($("#pvScroll").clientWidth-16)*PV.z);
-function pvLayout(){const w=pvWidth();PV.pages.forEach(p=>{p.el.style.width=w+"px";p.el.style.height=(PV.kind==="img"?"auto":w*p.ratio+"px");});if(PV.kind==="img")requestAnimationFrame(()=>PV.pages.forEach(p=>{annSize(p);annDraw(p);}));}
+const pvSnapOn=()=>(PV.kind==="pdf"||PV.kind==="img")&&PV.z<=1.001;
+function pvWidthFor(r){
+  const sc=$("#pvScroll"),cw=Math.max(200,sc.clientWidth-18);
+  if(PV.kind==="pdf"||PV.kind==="img"){const ch=Math.max(160,sc.clientHeight-18-(PV.z<=1.001?30:0));return Math.max(160,Math.min(cw,ch/(r||1.4))*PV.z);}
+  return cw*PV.z;
+}
+const pvWidth=()=>pvWidthFor(PV.ratio);
+function pvPlace(p,w){
+  const h=w*(p.ratio||1);p.el.style.width=w+"px";p.el.style.height=h+"px";
+  if(pvSnapOn()){const m=Math.max(24,Math.ceil(($("#pvScroll").clientHeight-h)/2)+2);p.el.style.marginTop=m+"px";p.el.style.marginBottom=m+"px";}
+  else{p.el.style.marginTop="";p.el.style.marginBottom="";}
+}
+const pvTopOf=el=>{const sc=$("#pvScroll");return sc.scrollTop+el.getBoundingClientRect().top-sc.getBoundingClientRect().top;};
+function pvGo(n,smooth){
+  const sc=$("#pvScroll");n=Math.max(1,Math.min(PV.pages.length,(n|0)||1));const p=PV.pages[n-1];if(!p)return;
+  const top=pvSnapOn()?pvTopOf(p.el)+p.el.offsetHeight/2-sc.clientHeight/2:pvTopOf(p.el)-6;
+  try{sc.scrollTo({top:Math.max(0,top),behavior:smooth===false?"auto":"smooth"});}catch(e){sc.scrollTop=Math.max(0,top);}
+}
+function pvLayout(){
+  $("#pvScroll").classList.toggle("snap",pvSnapOn());
+  PV.pages.forEach(p=>pvPlace(p,pvWidthFor(p.ratio)));
+  if(PV.kind==="img")requestAnimationFrame(()=>PV.pages.forEach(p=>{annSize(p);annDraw(p);}));
+}
 async function pvRender(p){
   if(p.rendered||p.busy||!PV.doc)return;p.busy=true;
   try{
     const page=await PV.doc.getPage(p.n),vp1=page.getViewport({scale:1});
-    p.ratio=vp1.height/vp1.width;const w=pvWidth();p.el.style.height=(w*p.ratio)+"px";
+    p.ratio=vp1.height/vp1.width;const w=pvWidthFor(p.ratio);pvPlace(p,w);
     const dpr=Math.min(window.devicePixelRatio||1,2);let scale=w/vp1.width*dpr;
     if(vp1.width*vp1.height*scale*scale>12e6)scale=Math.sqrt(12e6/(vp1.width*vp1.height));
     const vp=page.getViewport({scale}),c=p.canvas;c.width=Math.floor(vp.width);c.height=Math.floor(vp.height);
@@ -3542,7 +3601,7 @@ async function pvBuild(){
   const box=$("#pvPages");box.innerHTML="";PV.pages=[];box.style.removeProperty("--pvz");
   if(PV.kind==="img"){
     const d=document.createElement("div");d.className="pvpage";d.dataset.n=1;const im=document.createElement("img");im.src=pvUrl(PV.blob);d.appendChild(im);const ac=document.createElement("canvas");ac.className="pvann";d.appendChild(ac);box.appendChild(d);
-    const pg1={n:1,el:d,ratio:1,ann:ac};PV.pages.push(pg1);bindAnn(pg1);im.onload=()=>{annSize(pg1);annDraw(pg1);};$("#pvTotal").textContent="/ 1";$("#pvPage").max=1;pvLayout();return;
+    const pg1={n:1,el:d,ratio:1,ann:ac};PV.pages.push(pg1);bindAnn(pg1);im.onload=()=>{if(im.naturalWidth)pg1.ratio=im.naturalHeight/im.naturalWidth;pvLayout();annSize(pg1);annDraw(pg1);};$("#pvTotal").textContent="/ 1";$("#pvPage").max=1;pvLayout();return;
   }
   const n=PV.doc.numPages;$("#pvTotal").textContent="/ "+n;$("#pvPage").max=n;
   const p1=await PV.doc.getPage(1),vp=p1.getViewport({scale:1});PV.ratio=vp.height/vp.width;
@@ -3554,29 +3613,43 @@ async function pvBuild(){
   pvLayout();pvObserve();
 }
 function pvZoom(f){
-  const sc=$("#pvScroll"),r=sc.scrollHeight?sc.scrollTop/sc.scrollHeight:0;
+  const sc=$("#pvScroll"),r=sc.scrollHeight?sc.scrollTop/sc.scrollHeight:0,keep=PV.cur||1;
   PV.z=f===0?1:Math.max(.5,Math.min(4,PV.z*f));
   if(PV.kind==="pdf"||PV.kind==="img"){
     pvLayout();
     if(PV.kind==="pdf"){PV.pages.forEach(pvRelease);pvObserve();}
-  }else $("#pvPages").style.setProperty("--pvz",PV.z);
-  sc.scrollTop=r*sc.scrollHeight;
+    if(pvSnapOn())pvGo(keep,false);else sc.scrollTop=r*sc.scrollHeight;
+  }else{$("#pvPages").style.setProperty("--pvz",PV.z);sc.scrollTop=r*sc.scrollHeight;}
 }
 function pvTrack(){
   if(PV.kind!=="pdf")return;
-  const sc=$("#pvScroll"),mid=sc.scrollTop+sc.clientHeight/3;let cur=1;
-  for(const p of PV.pages){if(p.el.offsetTop<=mid)cur=p.n;else break;}
+  const sc=$("#pvScroll"),sr=sc.getBoundingClientRect(),mid=sr.top+sr.height/2;let cur=PV.cur||1,bd=1e9;
+  for(const p of PV.pages){const r=p.el.getBoundingClientRect(),d=Math.abs(r.top+r.height/2-mid);if(d<bd){bd=d;cur=p.n;}}
   if(cur!==PV.cur){PV.cur=cur;if(document.activeElement!==$("#pvPage"))$("#pvPage").value=cur;pvThumbMark();}
 }
 let pvRaf=0;$("#pvScroll").addEventListener("scroll",()=>{if(pvRaf)return;pvRaf=requestAnimationFrame(()=>{pvRaf=0;pvTrack();});});
-$("#pvPage").onchange=e=>{const n=Math.max(1,Math.min(PV.pages.length,+e.target.value||1)),p=PV.pages[n-1];if(p)$("#pvScroll").scrollTop=p.el.offsetTop-6;};
+$("#pvPage").onchange=e=>{pvGo(+e.target.value||1);};
+$("#pvPrev").onclick=()=>pvGo((PV.cur||1)-1);$("#pvNext").onclick=()=>pvGo((PV.cur||1)+1);
+$("#pvFull").onclick=()=>{const el=$("#pdfv");try{if(document.fullscreenElement||document.webkitFullscreenElement)(document.exitFullscreen||document.webkitExitFullscreen).call(document);else(el.requestFullscreen||el.webkitRequestFullscreen).call(el);}catch(e){}};
+if(!document.documentElement.requestFullscreen&&!document.documentElement.webkitRequestFullscreen)$("#pvFull").style.display="none";
+document.addEventListener("keydown",e=>{
+  if(!PV.open||PV.kind!=="pdf"||!pvSnapOn()||document.querySelector(".modal-bg"))return;
+  const t=e.target&&e.target.tagName;if(t==="INPUT"||t==="TEXTAREA"||(e.target&&e.target.isContentEditable))return;
+  if(e.key==="ArrowLeft"||e.key==="PageUp"){e.preventDefault();pvGo((PV.cur||1)-1);}
+  else if(e.key==="ArrowRight"||e.key==="PageDown"){e.preventDefault();pvGo((PV.cur||1)+1);}
+});
+if(window.ResizeObserver){let t=0,lw=0,lh=0;new ResizeObserver(()=>{
+  const sc=$("#pvScroll");if(!PV.open||(PV.kind!=="pdf"&&PV.kind!=="img"))return;
+  if(sc.clientWidth===lw&&sc.clientHeight===lh)return;lw=sc.clientWidth;lh=sc.clientHeight;
+  clearTimeout(t);t=setTimeout(()=>{pvLayout();if(PV.kind==="pdf"){PV.pages.forEach(pvRelease);pvObserve();}if(pvSnapOn())pvGo(PV.cur,false);},120);
+}).observe($("#pvScroll"));}
 $("#pvIn").onclick=()=>pvZoom(1.25);$("#pvOut").onclick=()=>pvZoom(.8);$("#pvFit").onclick=()=>pvZoom(0);
 $("#pvDl").onclick=()=>{if(PV.entry)saveFile(PV.entry.name,PV.blob);};
 let pvRz;window.addEventListener("resize",()=>{if(!PV.open||(PV.kind!=="pdf"&&PV.kind!=="img"))return;clearTimeout(pvRz);pvRz=setTimeout(()=>pvZoom(1),200);});
 function pvHide(){
   if(PV.thumbIO){PV.thumbIO.disconnect();PV.thumbIO=null;}$("#pvThumbs").innerHTML="";$("#pvAI").classList.add("hidden");speakStop();
   annFlush();ANN.on=false;annUi();const wasDocked=PV.docked;PV.docked=false;
-  PV.open=false;$("#pdfv").classList.add("hidden");
+  PV.open=false;$("#pdfv").classList.add("hidden");$("#pvScroll").classList.remove("snap");
   PV.pages.forEach(p=>{if(p.canvas)pvRelease(p);});if(PV.io){PV.io.disconnect();PV.io=null;}
   PV.urls.forEach(u=>{try{URL.revokeObjectURL(u);}catch(e){}});PV.urls=[];
   $("#pvPages").innerHTML="";PV.pages=[];
@@ -3592,7 +3665,7 @@ function pvInfoSet(){
   const parts=[KIND_LABEL[PV.kind]||"ملف"];
   if(PV.kind==="pdf"&&PV.doc)parts.push(PV.doc.numPages+" صفحة");
   if(PV.blob)parts.push(fmtSize(PV.blob.size));
-  $("#pvInfo").innerHTML="• "+parts.map(x=>"<bdi>"+x+"</bdi>").join(" • ");
+  $("#pvKind").textContent=parts[0];$("#pvInfo").innerHTML=parts.slice(1).map(x=>"<bdi>"+x+"</bdi>").join(" • ");
 }
 function pvThumbsBuild(){
   const box=$("#pvThumbs");box.innerHTML="";if(PV.thumbIO){PV.thumbIO.disconnect();PV.thumbIO=null;}
@@ -3600,13 +3673,13 @@ function pvThumbsBuild(){
   box.classList.remove("hidden");
   for(let i=1;i<=PV.doc.numPages;i++){
     const d=document.createElement("button");d.className="th";d.dataset.n=i;d.innerHTML='<canvas width="1" height="1"></canvas><span>'+i+'</span>';
-    d.onclick=()=>{const pg=PV.pages[i-1];if(pg)$("#pvScroll").scrollTop=pg.el.offsetTop-6;};box.appendChild(d);
+    d.onclick=()=>pvGo(i);box.appendChild(d);
   }
   PV.thumbIO=new IntersectionObserver(es=>es.forEach(async en=>{
     if(!en.isIntersecting)return;const d=en.target;if(d._done)return;d._done=true;PV.thumbIO&&PV.thumbIO.unobserve(d);
     try{
-      const page=await PV.doc.getPage(+d.dataset.n),vp=page.getViewport({scale:1}),sc=60/vp.width*Math.min(window.devicePixelRatio||1,2),v2=page.getViewport({scale:sc}),c=d.querySelector("canvas");
-      c.width=Math.floor(v2.width);c.height=Math.floor(v2.height);c.style.width="60px";c.style.height=(60*vp.height/vp.width)+"px";
+      const page=await PV.doc.getPage(+d.dataset.n),vp=page.getViewport({scale:1}),sc=72/vp.width*Math.min(window.devicePixelRatio||1,2),v2=page.getViewport({scale:sc}),c=d.querySelector("canvas");
+      c.width=Math.floor(v2.width);c.height=Math.floor(v2.height);{let tw=72,th=72*vp.height/vp.width;if(th>104){tw=104*vp.width/vp.height;th=104;}c.style.width=tw+"px";c.style.height=th+"px";}
       await page.render({canvasContext:c.getContext("2d"),viewport:v2}).promise;
     }catch(e){}
   }),{root:box,rootMargin:"300px"});
