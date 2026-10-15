@@ -1,9 +1,10 @@
 /* MNnote+ service worker: يعمل التطبيق بدون إنترنت */
-const VER = "mnnote-v1";
-const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./icon-maskable-512.png"];
+const VER = "mnnote-v4";
+const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./icon-maskable-512.png", "./pdf.min.mjs", "./pdf.worker.min.mjs", "./config.js"];
 
 self.addEventListener("install", e => {
-  e.waitUntil(caches.open(VER).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
+  // التخزين المسبق متسامح: غياب ملف لا يُفشل التثبيت كاملاً
+  e.waitUntil(caches.open(VER).then(c => Promise.allSettled(SHELL.map(u => c.add(u)))).then(() => self.skipWaiting()));
 });
 
 self.addEventListener("activate", e => {
